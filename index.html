@@ -277,6 +277,15 @@
             transform: translateY(-2px);
         }
 
+        .secondary-btn { /* Ajustes para o botão "Voltar" */
+            background-color: var(--info-color);
+            margin-top: 1rem; /* Menos margem para não ficar muito separado */
+        }
+        .secondary-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
         .dashboard-nav {
             display: flex;
             flex-wrap: wrap;
@@ -391,10 +400,10 @@
         .item-card img {
             width: 100%;
             height: 180px;
-            object-fit: contain;
+            object-fit: contain; /* Mantém a proporção e encaixa */
             background-color: var(--light-grey);
             border-bottom: 1px solid var(--border-color);
-            padding: 5px;
+            padding: 5px; /* Adiciona um pequeno padding para respiro */
         }
 
         /* Estilo para ícone de item padrão */
@@ -408,6 +417,7 @@
             align-items: center;
             font-size: 4rem;
             border-bottom: 1px solid var(--border-color);
+            padding: 5px;
         }
 
         .item-card-content {
@@ -566,7 +576,7 @@
             border: 1px dashed var(--border-color);
             border-radius: 5px;
             display: block;
-            object-fit: contain;
+            object-fit: contain; /* Garante que a imagem caiba sem cortar */
             background-color: var(--light-grey);
         }
 
@@ -666,6 +676,64 @@
             width: auto;
             object-fit: contain;
         }
+
+        /* NOVO: Estilos para o Modal de Notificação / Toast */
+        .app-notification {
+            position: fixed;
+            bottom: 20px; /* Posição na parte inferior */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 2000; /* Acima de tudo */
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            opacity: 0; /* Começa invisível */
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            min-width: 250px;
+            max-width: 90%; /* Limita a largura em telas menores */
+        }
+
+        .app-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px); /* Leve movimento para cima */
+        }
+
+        .app-notification.hidden {
+            display: none; /* Mantém oculto com display none quando não está visível */
+        }
+
+        .app-notification p {
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .app-notification .close-notification-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .app-notification.success {
+            background-color: var(--success-color);
+        }
+
+        .app-notification.error {
+            background-color: var(--danger-color);
+        }
+
+        .app-notification.info {
+            background-color: var(--info-color);
+        }
+
 
         /* Responsividade */
         @media (max-width: 768px) {
@@ -771,7 +839,7 @@
         <div class="header-content">
             <div class="main-title-area">
                 <h1>Achados e Perdidos</h1>
-                <img src="https://via.placeholder.com/70x70/004080/FFFFFF?text=ETEC" alt="Logo da ETEC" class="header-main-logo">
+                <img src="images/logo-etec.png" alt="Logo da ETEC" class="header-main-logo">
             </div>
             <div class="header-icons-right">
                 <button id="approval-notification-btn" title="Notificações de Aprovação" class="notification-icon-btn">
@@ -791,7 +859,7 @@
             <div class="search-bar">
                 <input type="text" id="student-search-input" placeholder="Pesquisar por nome ou descrição do item...">
                 <div id="category-filter-buttons" class="filter-buttons">
-                    </div>
+                </div>
             </div>
             <div id="student-items-container" class="items-grid">
             </div>
@@ -853,6 +921,7 @@
                 <h2>Itens Cadastrados</h2>
                 <div id="items-container" class="items-grid">
                 </div>
+                <p id="no-secretary-items-message" class="message hidden info">Nenhum item cadastrado ainda pela secretaria.</p>
             </div>
 
             <div id="add-item-view" class="dashboard-content">
@@ -873,6 +942,7 @@
                     <div class="input-group">
                         <label for="item-category">Categoria:</label>
                         <select id="item-category" required>
+                            <option value="">Selecione uma categoria</option>
                             </select>
                         <input type="text" id="item-custom-category" placeholder="Nome da nova categoria" class="hidden" style="margin-top: 10px;">
                     </div>
@@ -928,852 +998,677 @@
         </section>
     </main>
 
+    <div id="app-notification" class="app-notification hidden">
+        <p id="notification-text"></p>
+        <button class="close-notification-btn">&times;</button>
+    </div>
+
     <footer>
         <div class="footer-content">
-            <p class="footer-text">Desenvolvido por <span class="aura-text">AURA</span></p>
-            <img src="https://via.placeholder.com/50x50/004080/FFFFFF?text=ETEC" alt="Logo da ETEC" class="footer-logo">
+            <p class="footer-text">Desenvolvido com <span style="color: #e25555;">&hearts;</span> por <span class="aura-text">Projeto Aura</span></p>
+            <p class="footer-text">© 2024 ETEC Dacy - Todos os direitos reservados.</p>
         </div>
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Elementos HTML ---
-            const studentView = document.getElementById('student-view');
-            const authSection = document.getElementById('auth-section');
-            const secretaryDashboard = document.getElementById('secretary-dashboard');
-            const questionnaireSection = document.getElementById('questionnaire-section');
-            const proofsListView = document.getElementById('proofs-list-view');
+        // Funções auxiliares para manipulação do DOM e exibição de seções
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.remove('active');
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+            document.getElementById(sectionId).classList.add('active');
+            window.scrollTo(0, 0); // Volta para o topo da página ao mudar de seção
+        }
 
-            const secretaryLoginBtn = document.getElementById('secretary-login-btn');
-            const approvalNotificationBtn = document.getElementById('approval-notification-btn');
-            const approvalNotificationCount = document.getElementById('approval-notification-count');
-            const backToStudentFromAuthBtn = document.getElementById('back-to-student-from-auth');
+        // NOVO: Função auxiliar para formatar datas (RESOLVE "INVALID DATE")
+        function formatDateTime(dateTimeString) {
+            if (!dateTimeString) return 'Data/Hora não informada';
+            const date = new Date(dateTimeString);
 
-            const showLoginBtn = document.getElementById('show-login');
-            const showRegisterBtn = document.getElementById('show-register');
-            const loginForm = document.getElementById('login-form');
-            const registerForm = document.getElementById('register-form');
-            const loginMessage = document.getElementById('login-message');
-            const registerMessage = document.getElementById('register-message');
-
-            const viewItemsBtn = document.getElementById('view-items-btn');
-            const addItemBtn = document.getElementById('add-item-btn');
-            const viewProofsBtn = document.getElementById('view-proofs-btn');
-            const proofNotificationCount = document.getElementById('proof-notification-count');
-            const logoutBtn = document.getElementById('logout-btn');
-
-            const itemListView = document.getElementById('item-list-view');
-            const addItemView = document.getElementById('add-item-view');
-            const addItemForm = document.getElementById('add-item-form');
-            const itemsContainer = document.getElementById('items-container');
-            const addItemMessage = document.getElementById('add-item-message');
-            const itemPhotoInput = document.getElementById('item-photo');
-            const itemPhotoPreview = document.getElementById('item-photo-preview');
-            // NOVO: Elementos de categoria no formulário de adição
-            const itemCategorySelect = document.getElementById('item-category');
-            const itemCustomCategoryInput = document.getElementById('item-custom-category');
-
-            const studentSearchInput = document.getElementById('student-search-input');
-            const studentItemsContainer = document.getElementById('student-items-container');
-            const noItemsFoundMessage = document.getElementById('no-items-found');
-            // NOVO: Elemento para os botões de filtro do aluno
-            const categoryFilterButtonsContainer = document.getElementById('category-filter-buttons');
-            let currentFilterCategory = 'Todos'; // NOVO: Estado para o filtro de categoria ativa
-
-            const proofForm = document.getElementById('proof-form');
-            const proofMessage = document.getElementById('proof-message');
-            const backToStudentViewBtn = document.getElementById('back-to-student-view');
-
-            const proofsContainer = document.getElementById('proofs-container');
-            const noProofsMessage = document.getElementById('no-proofs-message');
-
-
-            // --- Variáveis de Estado (Simuladas) ---
-            let loggedInUser = null;
-            let currentItemForQuestionnaire = null;
-            let approvalNotifications = loadApprovalNotifications();
-
-            // NOVO: Categorias predefinidas e customizadas
-            const predefinedCategories = ['Eletrônicos', 'Documentos', 'Roupas e Acessórios', 'Material Escolar', 'Chaves', 'Outros'];
-            let customCategories = loadCustomCategories(); // Carrega customizadas do localStorage
-
-            // --- Funções de Utilitário ---
-
-            // Função para mostrar uma seção e ocultar as outras
-            function showSection(sectionToShow) {
-                const sections = [studentView, authSection, secretaryDashboard, questionnaireSection, proofsListView];
-                sections.forEach(section => {
-                    section.classList.add('hidden');
-                    section.classList.remove('active');
+            // Verifica se a data é válida
+            if (isNaN(date.getTime())) {
+                // Tenta um parser manual para datetime-local se o direto falhar,
+                // que pode ocorrer se o fuso horário ou formato não for estritamente ISO
+                const [datePart, timePart] = dateTimeString.split('T');
+                if (!datePart || !timePart) return 'Data/Hora Inválida'; // Adiciona verificação para partes
+                const [year, month, day] = datePart.split('-').map(Number);
+                const [hours, minutes] = timePart.split(':').map(Number);
+                // Mês é 0-indexed no construtor de Date
+                const validDate = new Date(year, month - 1, day, hours, minutes);
+                if (isNaN(validDate.getTime())) {
+                    return 'Data/Hora Inválida';
+                }
+                return validDate.toLocaleString('pt-BR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
-                sectionToShow.classList.remove('hidden');
-                sectionToShow.classList.add('active');
-                if (sectionToShow === secretaryDashboard) {
-                    updateProofNotificationCount();
-                    populateCategorySelect(); // Garante que as categorias estejam atualizadas
-                }
-                if (sectionToShow === studentView) {
-                    renderCategoryFilterButtons(); // Renderiza os botões de filtro para o aluno
-                    renderItems(loadItems(), studentItemsContainer, false, studentSearchInput.value, currentFilterCategory); // Recarrega itens com filtro atual
-                }
-                updateApprovalNotificationCount();
             }
+            return date.toLocaleString('pt-BR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
 
-            // Função para exibir mensagens temporárias
-            function showMessage(element, message, type = 'info', duration = 3000) {
-                element.textContent = message;
-                element.className = `message ${type}`;
-                element.style.display = 'block';
+
+        // NOVO: Função para mostrar notificações customizadas (SUBSTITUI ALERTS)
+        const appNotification = document.getElementById('app-notification');
+        const notificationText = document.getElementById('notification-text');
+        const closeNotificationBtn = appNotification.querySelector('.close-notification-btn');
+
+        let notificationTimeout;
+
+        function showNotification(message, type = 'info', duration = 3000) {
+            clearTimeout(notificationTimeout); // Limpa qualquer timeout anterior
+            notificationText.textContent = message;
+            appNotification.className = `app-notification show ${type}`; // Adiciona tipo e mostra
+            appNotification.style.display = 'flex'; // Garante que esteja visível (override hidden class)
+
+            notificationTimeout = setTimeout(() => {
+                appNotification.classList.remove('show');
+                // Espera a transição terminar antes de ocultar completamente
                 setTimeout(() => {
-                    element.style.display = 'none';
-                    element.textContent = '';
-                    element.className = 'message';
-                }, duration);
-            }
+                    appNotification.classList.add('hidden');
+                    appNotification.style.display = 'none'; // Oculta com display none
+                }, 500); // Duração da transição CSS
+            }, duration);
 
-            // Função para salvar usuários (simulado)
-            function saveUsers(users) {
-                localStorage.setItem('school_users', JSON.stringify(users));
-            }
+            closeNotificationBtn.onclick = () => {
+                clearTimeout(notificationTimeout);
+                appNotification.classList.remove('show');
+                setTimeout(() => {
+                    appNotification.classList.add('hidden');
+                    appNotification.style.display = 'none';
+                }, 500);
+            };
+        }
 
-            // Função para carregar usuários (simulado)
-            function loadUsers() {
-                const users = localStorage.getItem('school_users');
-                return users ? JSON.parse(users) : [];
-            }
 
-            // Função para salvar itens
-            function saveItems(items) {
-                localStorage.setItem('school_lost_found_items', JSON.stringify(items));
+        // Mock de dados para simular backend (LocalStorage)
+        // Adicionando um usuário padrão para facilitar o teste da secretaria
+        let users = JSON.parse(localStorage.getItem('secretaryUsers')) || [
+            { email: 'secretaria@etec.com', password: 'etecpassword' } // Usuário padrão para teste
+        ];
+        // Salvando o usuário padrão se ele não existir
+        if (!JSON.parse(localStorage.getItem('secretaryUsers'))) {
+             localStorage.setItem('secretaryUsers', JSON.stringify(users));
+        }
+
+
+        let items = JSON.parse(localStorage.getItem('lostAndFoundItems')) || [];
+        let proofs = JSON.parse(localStorage.getItem('itemProofs')) || [];
+        let categories = JSON.parse(localStorage.getItem('itemCategories')) || ["Material Escolar", "Eletrônicos", "Roupas", "Documentos", "Outros"];
+
+
+        // Variáveis de estado
+        let loggedInUser = null;
+        let selectedItemForProof = null; // Para guardar o item que o aluno está tentando comprovar
+
+        // Referências DOM
+        const secretaryLoginBtn = document.getElementById('secretary-login-btn');
+        const backToStudentViewBtn = document.getElementById('back-to-student-view');
+        const backToStudentFromAuthBtn = document.getElementById('back-to-student-from-auth');
+
+        // Autenticação
+        const showLoginBtn = document.getElementById('show-login');
+        const showRegisterBtn = document.getElementById('show-register');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const loginMessage = document.getElementById('login-message');
+        const registerMessage = document.getElementById('register-message');
+
+        // Dashboard da Secretaria
+        const viewItemsBtn = document.getElementById('view-items-btn');
+        const addItemBtn = document.getElementById('add-item-btn');
+        const viewProofsBtn = document.getElementById('view-proofs-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        const itemsContainer = document.getElementById('items-container');
+        const proofsContainer = document.getElementById('proofs-container');
+        const addItemForm = document.getElementById('add-item-form');
+        const itemPhotoInput = document.getElementById('item-photo');
+        const itemPhotoPreview = document.getElementById('item-photo-preview');
+        const addItemMessage = document.getElementById('add-item-message');
+        const proofNotificationCount = document.getElementById('proof-notification-count');
+        const approvalNotificationCount = document.getElementById('approval-notification-count');
+        const approvalNotificationBtn = document.getElementById('approval-notification-btn');
+        const noProofsMessage = document.getElementById('no-proofs-message');
+        const noSecretaryItemsMessage = document.getElementById('no-secretary-items-message');
+
+        // Formulário de Adicionar Item
+        const itemCategorySelect = document.getElementById('item-category');
+        const itemCustomCategoryInput = document.getElementById('item-custom-category');
+
+
+        // Visualização do Aluno
+        const studentItemsContainer = document.getElementById('student-items-container');
+        const studentSearchInput = document.getElementById('student-search-input');
+        const noItemsFoundMessage = document.getElementById('no-items-found');
+        const categoryFilterButtonsContainer = document.getElementById('category-filter-buttons');
+
+
+        // Event Listeners Globais
+        secretaryLoginBtn.addEventListener('click', () => showSection('auth-section'));
+        backToStudentViewBtn.addEventListener('click', () => showSection('student-view'));
+        backToStudentFromAuthBtn.addEventListener('click', () => showSection('student-view'));
+
+
+        // --- Funções de Autenticação e Navegação do Dashboard ---
+        showLoginBtn.addEventListener('click', () => {
+            showLoginBtn.classList.add('active');
+            showRegisterBtn.classList.remove('active');
+            loginForm.classList.add('active');
+            registerForm.classList.remove('active');
+            loginMessage.textContent = '';
+        });
+
+        showRegisterBtn.addEventListener('click', () => {
+            showRegisterBtn.classList.add('active');
+            showLoginBtn.classList.remove('active');
+            registerForm.classList.add('active');
+            loginForm.classList.remove('active');
+            registerMessage.textContent = '';
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                loggedInUser = user;
+                showNotification('Login bem-sucedido!', 'success'); // SUBSTITUI ALERT
+                showSection('secretary-dashboard');
+                renderDashboardItems(); // Exibe os itens ao logar
                 updateProofNotificationCount();
+                updateApprovalNotificationBadge();
+            } else {
+                showNotification('Credenciais inválidas.', 'error'); // SUBSTITUI ALERT
+            }
+        });
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                showNotification('As senhas não coincidem.', 'error'); // SUBSTITUI ALERT
+                return;
+            }
+            if (users.some(u => u.email === email)) {
+                showNotification('Este e-mail já está cadastrado.', 'error'); // SUBSTITUI ALERT
+                return;
             }
 
-            // Função para carregar itens
-            function loadItems() {
-                const items = localStorage.getItem('school_lost_found_items');
-                return items ? JSON.parse(items) : [];
+            users.push({ email, password });
+            localStorage.setItem('secretaryUsers', JSON.stringify(users));
+            showNotification('Cadastro realizado com sucesso! Faça login.', 'success'); // SUBSTITUI ALERT
+            showLoginBtn.click(); // Volta para a tela de login
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            loggedInUser = null;
+            showNotification('Logout realizado.', 'info'); // SUBSTITUI ALERT
+            showSection('student-view'); // Volta para a tela do aluno
+            renderStudentItems(); // Re-renderiza os itens para o aluno
+            // Limpa os campos de login/cadastro
+            loginForm.reset();
+            registerForm.reset();
+            itemPhotoPreview.classList.add('hidden'); // Oculta a preview da foto ao deslogar
+            itemPhotoInput.value = ''; // Limpa o input de arquivo
+        });
+
+        // --- Funções do Dashboard da Secretaria ---
+        viewItemsBtn.addEventListener('click', () => {
+            document.querySelectorAll('.dashboard-content').forEach(content => content.classList.remove('active-content'));
+            document.getElementById('item-list-view').classList.add('active-content');
+            renderDashboardItems();
+        });
+
+        addItemBtn.addEventListener('click', () => {
+            document.querySelectorAll('.dashboard-content').forEach(content => content.classList.remove('active-content'));
+            document.getElementById('add-item-view').classList.add('active-content');
+            addItemForm.reset(); // Limpa o formulário ao abrir
+            itemPhotoPreview.src = '#'; // Garante que a src esteja vazia
+            itemPhotoPreview.classList.add('hidden'); // Oculta a preview
+            itemPhotoInput.value = ''; // Limpa o input de arquivo
+            renderCategoryOptions(); // Garante que as categorias estejam atualizadas
+            itemCustomCategoryInput.classList.add('hidden'); // Oculta campo de categoria customizada
+        });
+
+        viewProofsBtn.addEventListener('click', () => {
+            document.querySelectorAll('.dashboard-content').forEach(content => content.classList.remove('active-content'));
+            document.getElementById('proofs-list-view').classList.add('active-content');
+            renderProofs();
+        });
+
+        // Lógica para adicionar nova categoria
+        itemCategorySelect.addEventListener('change', () => {
+            if (itemCategorySelect.value === 'new-category') {
+                itemCustomCategoryInput.classList.remove('hidden');
+                itemCustomCategoryInput.setAttribute('required', 'required');
+            } else {
+                itemCustomCategoryInput.classList.add('hidden');
+                itemCustomCategoryInput.removeAttribute('required');
             }
+        });
 
-            // NOVO: Funções para salvar e carregar categorias customizadas
-            function saveCustomCategories(categories) {
-                localStorage.setItem('school_custom_categories', JSON.stringify(categories));
-            }
-
-            function loadCustomCategories() {
-                const categories = localStorage.getItem('school_custom_categories');
-                return categories ? JSON.parse(categories) : [];
-            }
-
-            // Função para salvar notificações de aprovação
-            function saveApprovalNotifications(notifications) {
-                localStorage.setItem('school_approval_notifications', JSON.stringify(notifications));
-                updateApprovalNotificationCount();
-            }
-
-            // Função para carregar notificações de aprovação
-            function loadApprovalNotifications() {
-                const notifications = localStorage.getItem('school_approval_notifications');
-                return notifications ? JSON.parse(notifications) : [];
-            }
-
-            // Função para formatar data
-            function formatDate(dateString) {
-                const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-                return new Date(dateString).toLocaleDateString('pt-BR', options);
-            }
-
-            // --- Lógica de Navegação Principal ---
-
-            // Clicar no ícone de "pessoainha" (acesso da secretaria)
-            secretaryLoginBtn.addEventListener('click', () => {
-                showSection(authSection);
-                showLoginBtn.click();
+        function renderCategoryOptions() {
+            itemCategorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                itemCategorySelect.appendChild(option);
             });
-
-            // Clicar no ícone de "check" para ver notificações de aprovação
-            approvalNotificationBtn.addEventListener('click', () => {
-                if (approvalNotifications.length > 0) {
-                    alert('Notificações de Aprovação:\n\n' + approvalNotifications.map(n => n.message).join('\n'));
-                    approvalNotifications = [];
-                    saveApprovalNotifications(approvalNotifications);
-                } else {
-                    alert('Nenhuma notificação de aprovação pendente.');
-                }
-            });
-
-            // Voltar para a visualização de alunos a partir da tela de autenticação
-            backToStudentFromAuthBtn.addEventListener('click', () => {
-                showSection(studentView);
-                renderItems(loadItems(), studentItemsContainer, false, studentSearchInput.value, currentFilterCategory);
-            });
-
-            // --- Lógica de Autenticação da Secretaria ---
-
-            // Alternar entre formulários de Login e Cadastro
-            showLoginBtn.addEventListener('click', () => {
-                loginForm.classList.add('active');
-                registerForm.classList.remove('active');
-                showLoginBtn.classList.add('active');
-                showRegisterBtn.classList.remove('active');
-                loginMessage.style.display = 'none';
-                registerMessage.style.display = 'none';
-            });
-
-            showRegisterBtn.addEventListener('click', () => {
-                registerForm.classList.add('active');
-                loginForm.classList.remove('active');
-                showRegisterBtn.classList.add('active');
-                showLoginBtn.classList.remove('active');
-                loginMessage.style.display = 'none';
-                registerMessage.style.display = 'none';
-            });
-
-            // Cadastro de Usuário
-            registerForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('register-email').value;
-                const password = document.getElementById('register-password').value;
-                const confirmPassword = document.getElementById('register-confirm-password').value;
-
-                if (password.length < 8) {
-                    showMessage(registerMessage, 'A senha deve ter no mínimo 8 dígitos.', 'error');
-                    return;
-                }
-                if (password !== confirmPassword) {
-                    showMessage(registerMessage, 'As senhas não coincidem.', 'error');
-                    return;
-                }
-
-                let users = loadUsers();
-                if (users.some(user => user.email === email)) {
-                    showMessage(registerMessage, 'Este e-mail já está cadastrado.', 'error');
-                    return;
-                }
-
-                users.push({ email, password });
-                saveUsers(users);
-                showMessage(registerMessage, 'Cadastro realizado com sucesso! Faça login.', 'success');
-                registerForm.reset();
-                showLoginBtn.click();
-            });
-
-            // Login de Usuário
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-
-                let users = loadUsers();
-                const user = users.find(u => u.email === email && u.password === password);
-
-                if (user) {
-                    loggedInUser = user;
-                    showMessage(loginMessage, 'Login bem-sucedido! Redirecionando para o dashboard...', 'success');
-                    loginForm.reset();
-                    setTimeout(() => {
-                        showSection(secretaryDashboard);
-                        renderItems(loadItems(), itemsContainer, true);
-                        showDashboardContent('item-list-view');
-                    }, 1000);
-                } else {
-                    showMessage(loginMessage, 'E-mail ou senha incorretos.', 'error');
-                }
-            });
-
-            // Logout
-            logoutBtn.addEventListener('click', () => {
-                loggedInUser = null;
-                showMessage(loginMessage, 'Você foi desconectado.', 'info');
-                showSection(studentView);
-                renderItems(loadItems(), studentItemsContainer, false, studentSearchInput.value, currentFilterCategory);
-                loginForm.reset();
-            });
-
-            // --- Lógica do Dashboard da Secretaria ---
-
-            // Alternar entre visualizações do dashboard
-            function showDashboardContent(viewId) {
-                document.querySelectorAll('.dashboard-content').forEach(content => {
-                    content.classList.remove('active-content');
-                });
-                document.getElementById(viewId).classList.add('active-content');
-            }
-
-            viewItemsBtn.addEventListener('click', () => {
-                showDashboardContent('item-list-view');
-                renderItems(loadItems(), itemsContainer, true);
-            });
-
-            addItemBtn.addEventListener('click', () => {
-                showDashboardContent('add-item-view');
-                addItemForm.reset();
-                itemPhotoPreview.classList.add('hidden');
-                itemPhotoPreview.src = '#';
-                addItemMessage.style.display = 'none';
-                populateCategorySelect(); // NOVO: Popula o select de categorias ao abrir o formulário
-                itemCustomCategoryInput.classList.add('hidden'); // Esconde o campo de custom category
-            });
-
-            // Botão para ver as comprovações
-            viewProofsBtn.addEventListener('click', () => {
-                showDashboardContent('proofs-list-view');
-                renderProofs();
-            });
-
-            // NOVO: Popula o select de categorias no formulário de adicionar item
-            function populateCategorySelect() {
-                itemCategorySelect.innerHTML = '';
-                const allCategories = [...predefinedCategories, ...customCategories.filter(cat => !predefinedCategories.includes(cat))];
-                allCategories.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category;
-                    option.textContent = category;
-                    itemCategorySelect.appendChild(option);
-                });
-            }
-
-            // NOVO: Mostra/esconde campo de custom category baseado na seleção
-            itemCategorySelect.addEventListener('change', () => {
-                if (itemCategorySelect.value === 'Outros') {
-                    itemCustomCategoryInput.classList.remove('hidden');
-                    itemCustomCategoryInput.setAttribute('required', 'true');
-                } else {
-                    itemCustomCategoryInput.classList.add('hidden');
-                    itemCustomCategoryInput.removeAttribute('required');
-                    itemCustomCategoryInput.value = ''; // Limpa o valor se não for "Outros"
-                }
-            });
+            const newCategoryOption = document.createElement('option');
+            newCategoryOption.value = 'new-category';
+            newCategoryOption.textContent = 'Adicionar Nova Categoria';
+            itemCategorySelect.appendChild(newCategoryOption);
+            localStorage.setItem('itemCategories', JSON.stringify(categories));
+        }
 
 
-            // Pré-visualização da imagem no formulário de adição
-            itemPhotoInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        itemPhotoPreview.src = e.target.result;
-                        itemPhotoPreview.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    itemPhotoPreview.classList.add('hidden');
-                    itemPhotoPreview.src = '#';
-                }
-            });
-
-            // Adicionar Novo Item
-            addItemForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                const name = document.getElementById('item-name').value;
-                const description = document.getElementById('item-description').value;
-                const location = document.getElementById('item-location').value;
-                let category = itemCategorySelect.value;
-                const photoBase64 = itemPhotoPreview.src !== '#' ? itemPhotoPreview.src : '';
-
-                // NOVO: Lógica para categoria customizada
-                if (category === 'Outros') {
-                    const customCatValue = itemCustomCategoryInput.value.trim();
-                    if (!customCatValue) {
-                        showMessage(addItemMessage, 'Por favor, digite o nome da nova categoria.', 'error');
-                        return;
-                    }
-                    category = customCatValue;
-                    if (!customCategories.includes(category)) {
-                        customCategories.push(category);
-                        saveCustomCategories(customCategories);
-                    }
-                }
-
-                if (!name || !description || !location || !category) { // MODIFICADO: Valida categoria
-                    showMessage(addItemMessage, 'Por favor, preencha todos os campos obrigatórios.', 'error');
-                    return;
-                }
-
-                let items = loadItems();
-                const newItem = {
-                    id: Date.now(),
-                    name,
-                    description,
-                    location,
-                    category, // NOVO: Salva a categoria
-                    photo: photoBase64,
-                    foundDate: new Date().toISOString(),
-                    status: 'Encontrado',
-                    proofs: []
+        // Pré-visualização da imagem no formulário de adicionar item
+        itemPhotoInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    itemPhotoPreview.src = e.target.result;
+                    itemPhotoPreview.classList.remove('hidden');
                 };
-
-                items.push(newItem);
-                saveItems(items);
-                showMessage(addItemMessage, 'Item cadastrado com sucesso!', 'success');
-                addItemForm.reset();
-                itemPhotoPreview.classList.add('hidden');
+                reader.readAsDataURL(file);
+            } else {
                 itemPhotoPreview.src = '#';
-                itemCustomCategoryInput.classList.add('hidden'); // Esconde o campo de custom category
-                populateCategorySelect(); // Repopula para incluir a nova categoria se houver
-                renderItems(items, itemsContainer, true);
-                showDashboardContent('item-list-view');
-            });
+                itemPhotoPreview.classList.add('hidden');
+            }
+        });
 
-            // Renderizar Itens (para Secretaria e Aluno)
-            // MODIFICADO: Adicionado parâmetros de filtro
-            function renderItems(items, containerElement, isSecretaryView, searchTerm = '', filterCategory = 'Todos') {
-                containerElement.innerHTML = '';
+        addItemForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('item-name').value;
+            const description = document.getElementById('item-description').value;
+            const location = document.getElementById('item-location').value;
+            let category = itemCategorySelect.value;
+            const photo = itemPhotoPreview.src === '#' ? '' : itemPhotoPreview.src; // Pega a base64 da imagem
 
-                // NOVO: Filtragem
-                let filteredItems = items.filter(item => {
-                    const matchesSearch = searchTerm === '' ||
-                        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        item.location.toLowerCase().includes(searchTerm.toLowerCase());
-
-                    const matchesCategory = filterCategory === 'Todos' ||
-                                            (item.category && item.category.toLowerCase() === filterCategory.toLowerCase()); // Garante que item.category existe
-
-                    return matchesSearch && matchesCategory;
-                });
-
-
-                if (filteredItems.length === 0) {
-                    if (isSecretaryView) {
-                        containerElement.innerHTML = '<p class="message info">Nenhum item cadastrado ainda. Use "Cadastrar Novo Item" para adicionar.</p>';
-                    } else {
-                        noItemsFoundMessage.classList.remove('hidden');
-                        containerElement.innerHTML = '';
-                    }
+            // Se for nova categoria, usa o valor do campo customizado
+            if (category === 'new-category') {
+                category = itemCustomCategoryInput.value.trim();
+                if (category && !categories.includes(category)) {
+                    categories.push(category);
+                    renderCategoryOptions(); // Atualiza a lista de categorias
+                } else if (!category) {
+                    showNotification('Nome da nova categoria não pode ser vazio.', 'error');
                     return;
-                } else {
-                    noItemsFoundMessage.classList.add('hidden');
                 }
+            }
 
-                filteredItems.forEach(item => { // MODIFICADO: Usa filteredItems
-                    const itemCard = document.createElement('div');
-                    itemCard.classList.add('item-card');
-                    if (!isSecretaryView) {
-                        itemCard.classList.add('student-item-card');
-                    }
 
-                    const itemImageOrIcon = item.photo ?
-                        `<img src="${item.photo}" alt="${item.name}">` :
-                        `<div class="item-placeholder-icon"><i class="fas fa-box"></i></div>`;
+            const newItem = {
+                id: Date.now(), // ID único baseado no timestamp
+                name,
+                description,
+                location,
+                category,
+                photo,
+                foundDate: new Date().toISOString(), // Data de quando foi cadastrado/encontrado
+                claimed: false,
+                approvedProofId: null // ID da comprovação aprovada, se houver
+            };
 
-                    itemCard.innerHTML = `
-                        ${itemImageOrIcon}
-                        <div class="item-card-content">
-                            <h3>${item.name}</h3>
-                            <p><strong>Descrição:</strong> ${item.description}</p>
-                            <p><strong>Encontrado em:</strong> ${item.location}</p>
-                            <p><strong>Categoria:</strong> ${item.category || 'Não Informado'}</p> <p class="item-meta">Adicionado em: ${formatDate(item.foundDate)}</p>
-                            ${isSecretaryView ? `
-                                <div class="item-actions">
-                                    <button class="edit-btn" data-id="${item.id}">Editar</button>
-                                    <button class="delete-btn" data-id="${item.id}">Excluir</button>
-                                </div>
-                                ` : `
-                                <div class="item-actions">
-                                    <button class="claim-btn" data-id="${item.id}">Perdi este item!</button>
-                                </div>
-                            `}
+            items.push(newItem);
+            localStorage.setItem('lostAndFoundItems', JSON.stringify(items));
+            showNotification('Item adicionado com sucesso!', 'success'); // SUBSTITUI ALERT
+            addItemForm.reset();
+            itemPhotoPreview.src = '#'; // Reseta a src
+            itemPhotoPreview.classList.add('hidden');
+            itemPhotoInput.value = '';
+            renderStudentItems(); // Atualiza a lista para o aluno também
+            renderDashboardItems(); // Atualiza a lista para a secretaria
+            renderCategoryFilterButtons(); // Atualiza botões de filtro para novas categorias
+        });
+
+        function renderDashboardItems() {
+            itemsContainer.innerHTML = '';
+            if (items.length === 0) {
+                noSecretaryItemsMessage.classList.remove('hidden');
+                itemsContainer.classList.add('hidden'); // Esconde o grid se não houver itens
+                return;
+            } else {
+                noSecretaryItemsMessage.classList.add('hidden');
+                itemsContainer.classList.remove('hidden'); // Mostra o grid
+            }
+
+            items.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'item-card';
+
+                // Renderiza imagem ou placeholder de ícone
+                const itemImageHtml = item.photo
+                    ? `<img src="${item.photo}" alt="${item.name}">`
+                    : `<div class="item-placeholder-icon"><i class="fas fa-box"></i></div>`; // Ícone genérico
+
+                itemCard.innerHTML = `
+                    ${itemImageHtml}
+                    <div class="item-card-content">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <p class="item-meta"><strong>Encontrado em:</strong> ${item.location}</p>
+                        <p class="item-meta"><strong>Categoria:</strong> ${item.category}</p>
+                        <p class="item-meta"><strong>Data Encontrado:</strong> ${formatDateTime(item.foundDate)}</p>
+                        <p class="item-meta"><strong>Status:</strong> ${item.claimed ? 'Reivindicado' : 'Disponível'}</p>
+                        <div class="item-actions">
+                            <button class="edit-btn" data-id="${item.id}">Editar</button>
+                            <button class="delete-btn" data-id="${item.id}">Excluir</button>
                         </div>
-                    `;
-                    containerElement.appendChild(itemCard);
-                });
-
-                // Adiciona listeners para botões de ação após renderizar
-                if (isSecretaryView) {
-                    containerElement.querySelectorAll('.edit-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const itemId = parseInt(e.target.dataset.id);
-                            const itemToEdit = loadItems().find(item => item.id === itemId);
-                            if (itemToEdit) {
-                                alert(`Editando item: ${itemToEdit.name}\n(Funcionalidade de edição completa a ser implementada, você preencheria o formulário de cadastro com esses dados.)`);
-                            }
-                        });
-                    });
-
-                    containerElement.querySelectorAll('.delete-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            if (confirm('Tem certeza que deseja excluir este item? Esta ação é irreversível.')) {
-                                let items = loadItems();
-                                items = items.filter(item => item.id != e.target.dataset.id);
-                                saveItems(items);
-                                renderItems(items, itemsContainer, true);
-                                showMessage(itemsContainer.closest('.dashboard-content').querySelector('h2'), 'Item excluído com sucesso!', 'success', 2000);
-                            }
-                        });
-                    });
-                } else { // View para Alunos
-                    containerElement.querySelectorAll('.claim-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const itemId = parseInt(e.target.dataset.id);
-                            currentItemForQuestionnaire = loadItems().find(item => item.id === itemId);
-                            if (currentItemForQuestionnaire) {
-                                showSection(questionnaireSection);
-                                proofForm.reset();
-                                proofMessage.style.display = 'none';
-                            } else {
-                                showMessage(studentItemsContainer.closest('section').querySelector('h2'), 'Item não encontrado para comprovação.', 'error');
-                            }
-                        });
-                    });
-                }
-            }
-
-            // --- Lógica da Nova Seção de Comprovações (Secretaria) ---
-
-            // Função para renderizar as comprovações para a secretaria
-            function renderProofs() {
-                proofsContainer.innerHTML = '';
-                const allItems = loadItems();
-                let allProofs = [];
-
-                // Coleta todas as comprovações de todos os itens
-                allItems.forEach(item => {
-                    if (item.proofs && item.proofs.length > 0) {
-                        item.proofs.forEach(proof => {
-                            allProofs.push({
-                                itemId: item.id,
-                                itemName: item.name,
-                                itemPhoto: item.photo,
-                                ...proof,
-                                status: proof.status || 'pendente'
-                            });
-                        });
-                    }
-                });
-
-                // Filtra apenas as comprovações pendentes para exibição
-                const pendingProofs = allProofs.filter(proof => proof.status === 'pendente');
-
-                if (pendingProofs.length === 0) {
-                    noProofsMessage.classList.remove('hidden');
-                } else {
-                    noProofsMessage.classList.add('hidden');
-                    pendingProofs.forEach(proof => {
-                        const proofCard = document.createElement('div');
-                        proofCard.classList.add('proof-card');
-
-                        // NOVO: Adiciona a imagem do item ou um placeholder no card de comprovação
-                        const itemImageOrIcon = proof.itemPhoto ?
-                            `<img src="${proof.itemPhoto}" alt="${proof.itemName}" class="proof-item-thumbnail">` :
-                            `<div class="proof-item-placeholder-icon"><i class="fas fa-box"></i></div>`;
-
-                        proofCard.innerHTML = `
-                            ${itemImageOrIcon} <h3>Comprovação para: "${proof.itemName}"</h3>
-                            <p><strong>Aluno:</strong> ${proof.studentName}</p>
-                            <p><strong>Turma:</strong> ${proof.studentClass}</p>
-                            <p><strong>Perdido em (aproximado):</strong> ${formatDate(proof.timeLost)}</p>
-                            <p><strong>Local Perdido:</strong> ${proof.lostLocation}</p>
-                            <p><strong>Detalhe Único:</strong> ${proof.itemUniqueDetail}</p>
-                            <p class="proof-meta">Enviado em: ${formatDate(proof.submittedAt)}</p>
-                            <div class="proof-actions">
-                                <button class="approve-btn" data-item-id="${proof.itemId}" data-proof-id="${proof.submittedAt}">Aprovar e Enviar Código</button>
-                                <button class="reject-btn" data-item-id="${proof.itemId}" data-proof-id="${proof.submittedAt}">Rejeitar</button>
-                            </div>
-                        `;
-                        proofsContainer.appendChild(proofCard);
-                    });
-
-                    // Adiciona listeners para os botões de Aprovar/Rejeitar
-                    proofsContainer.querySelectorAll('.approve-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const itemId = parseInt(e.target.dataset.itemId);
-                            const proofId = e.target.dataset.proofId;
-                            processProof(itemId, proofId, 'aprovado');
-
-                            const approvedProof = allProofs.find(p => p.itemId === itemId && p.submittedAt === proofId);
-                            if (approvedProof) {
-                                const notificationMessage = `Sua comprovação para "${approvedProof.itemName}" foi aprovada! Procure a secretaria.`;
-                                approvalNotifications.push({ itemId: approvedProof.itemId, message: notificationMessage, timestamp: new Date().toISOString() });
-                                saveApprovalNotifications(approvalNotifications);
-                            }
-                            alert('Código de aprovação simulado enviado! (Para um sistema real, aqui haveria a integração com um serviço para notificar o aluno com um código ou instrução).');
-                        });
-                    });
-
-                    proofsContainer.querySelectorAll('.reject-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const itemId = parseInt(e.target.dataset.itemId);
-                            const proofId = e.target.dataset.proofId;
-                            if (confirm('Tem certeza que deseja rejeitar esta comprovação?')) {
-                                processProof(itemId, proofId, 'rejeitado');
-                            }
-                        });
-                    });
-                }
-                updateProofNotificationCount();
-            }
-
-            // Função para processar (aprovar/rejeitar) uma comprovação
-            function processProof(itemId, proofId, status) {
-                let items = loadItems();
-                const itemIndex = items.findIndex(item => item.id === itemId);
-
-                if (itemIndex > -1 && items[itemIndex].proofs) {
-                    const proofIndex = items[itemIndex].proofs.findIndex(proof => proof.submittedAt === proofId);
-                    if (proofIndex > -1) {
-                        items[itemIndex].proofs[proofIndex].status = status;
-                        saveItems(items);
-                        renderProofs();
-                        showMessage(proofsListView.querySelector('h2'), `Comprovação ${status === 'aprovado' ? 'aprovada' : 'rejeitada'} com sucesso!`, status === 'aprovado' ? 'success' : 'info', 2000);
-                    }
-                }
-            }
-
-            // Função para atualizar o contador de notificações de COMPROVAÇÕES PENDENTES (para a secretaria)
-            function updateProofNotificationCount() {
-                const allItems = loadItems();
-                let pendingCount = 0;
-                allItems.forEach(item => {
-                    if (item.proofs && item.proofs.length > 0) {
-                        pendingCount += item.proofs.filter(proof => proof.status === 'pendente').length;
-                    }
-                });
-
-                if (pendingCount > 0) {
-                    proofNotificationCount.textContent = pendingCount;
-                    proofNotificationCount.classList.remove('hidden');
-                } else {
-                    proofNotificationCount.classList.add('hidden');
-                }
-            }
-
-            // Função para atualizar o contador de NOTIFICAÇÕES DE APROVAÇÃO (para o aluno)
-            function updateApprovalNotificationCount() {
-                const count = approvalNotifications.length;
-                if (count > 0) {
-                    approvalNotificationCount.textContent = count;
-                    approvalNotificationCount.classList.remove('hidden');
-                } else {
-                    approvalNotificationCount.classList.add('hidden');
-                }
-            }
-
-            // --- Lógica de Visualização para Alunos (Página Inicial) ---
-
-            // Campo de pesquisa para alunos
-            studentSearchInput.addEventListener('input', () => {
-                const searchTerm = studentSearchInput.value;
-                renderItems(loadItems(), studentItemsContainer, false, searchTerm, currentFilterCategory);
+                    </div>
+                `;
+                itemsContainer.appendChild(itemCard);
             });
 
-            // NOVO: Renderiza os botões de filtro de categoria para a visualização do aluno
-            function renderCategoryFilterButtons() {
-                categoryFilterButtonsContainer.innerHTML = '';
-                const allPossibleCategories = ['Todos', ...predefinedCategories, ...customCategories.filter(cat => !predefinedCategories.includes(cat) && cat !== 'Todos')].sort(); // Garante "Todos" primeiro e ordena as outras
-
-                allPossibleCategories.forEach(category => {
-                    const button = document.createElement('button');
-                    button.classList.add('filter-button');
-                    if (category === 'Todos') {
-                        button.classList.add('all-items-btn');
-                    }
-                    button.textContent = category;
-                    button.dataset.category = category; // Armazena a categoria no dataset
-
-                    if (category.toLowerCase() === currentFilterCategory.toLowerCase()) {
-                        button.classList.add('active');
-                    }
-
-                    button.addEventListener('click', () => {
-                        currentFilterCategory = category;
-                        // Remove a classe 'active' de todos os botões
-                        categoryFilterButtonsContainer.querySelectorAll('.filter-button').forEach(btn => {
-                            btn.classList.remove('active');
-                        });
-                        // Adiciona a classe 'active' ao botão clicado
-                        button.classList.add('active');
-                        // Renderiza os itens com o novo filtro de categoria
-                        renderItems(loadItems(), studentItemsContainer, false, studentSearchInput.value, currentFilterCategory);
-                    });
-                    categoryFilterButtonsContainer.appendChild(button);
+            // Adicionar event listeners para botões de editar/excluir (lógica ainda não implementada)
+            itemsContainer.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    showNotification(`Funcionalidade de Editar item ${e.target.dataset.id} ainda não implementada.`, 'info');
                 });
+            });
+            itemsContainer.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    // Substituição de 'confirm' por notificação customizada com confirmação
+                    showNotification(`Deseja realmente excluir o item "${items.find(i => i.id == e.target.dataset.id)?.name || 'desconhecido'}"?`, 'info', 5000);
+                    // Um modal de confirmação real seria melhor aqui, mas para manter a funcionalidade:
+                    if (confirm('Tem certeza que deseja excluir este item? Esta ação é irreversível.')) {
+                         deleteItem(e.target.dataset.id);
+                         showNotification('Item excluído com sucesso!', 'success');
+                    }
+                });
+            });
+        }
+
+        function deleteItem(itemId) {
+            items = items.filter(item => item.id != itemId); // Usar != para ID string/number
+            localStorage.setItem('lostAndFoundItems', JSON.stringify(items));
+            renderDashboardItems();
+            renderStudentItems(); // Atualiza também a visualização do aluno
+        }
+
+
+        function renderProofs() {
+            proofsContainer.innerHTML = '';
+            const pendingProofs = proofs.filter(p => !p.approved && !p.rejected);
+
+            if (pendingProofs.length === 0) {
+                noProofsMessage.classList.remove('hidden');
+                proofsContainer.classList.add('hidden'); // Oculta o grid se não houver comprovações
+                return;
+            } else {
+                noProofsMessage.classList.add('hidden');
+                proofsContainer.classList.remove('hidden');
             }
 
+            pendingProofs.forEach(proof => {
+                const itemRelated = items.find(item => item.id == proof.itemId);
+                const itemThumbnailHtml = itemRelated && itemRelated.photo
+                    ? `<img src="${itemRelated.photo}" alt="${itemRelated.name}" class="proof-item-thumbnail">`
+                    : `<div class="proof-item-placeholder-icon"><i class="fas fa-box"></i></div>`; // Ícone genérico para item sem foto
 
-            // --- Lógica do Questionário de Comprovação ---
+                const proofCard = document.createElement('div');
+                proofCard.className = 'proof-card';
+                proofCard.innerHTML = `
+                    ${itemThumbnailHtml}
+                    <h3>Comprovação para ${itemRelated ? itemRelated.name : 'Item Desconhecido'}</h3>
+                    <p><strong>Aluno:</strong> ${proof.studentName}</p>
+                    <p><strong>Turma:</strong> ${proof.studentClass}</p>
+                    <p><strong>Data/Hora da Perda:</strong> ${formatDateTime(proof.timeLost)}</p>
+                    <p><strong>Local da Perda:</strong> ${proof.lostLocation}</p>
+                    <p><strong>Detalhe Específico:</strong> ${proof.uniqueDetail}</p>
+                    <div class="proof-actions">
+                        <button class="approve-btn" data-id="${proof.id}">Aprovar e Notificar</button>
+                        <button class="reject-btn" data-id="${proof.id}">Rejeitar</button>
+                    </div>
+                `;
+                proofsContainer.appendChild(proofCard);
+            });
 
-            proofForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                if (!currentItemForQuestionnaire) {
-                    showMessage(proofMessage, 'Nenhum item selecionado para comprovação. Por favor, volte e selecione um item.', 'error');
-                    return;
-                }
+            // Adicionar event listeners para botões de aprovar/rejeitar
+            proofsContainer.querySelectorAll('.approve-btn').forEach(button => {
+                button.addEventListener('click', (e) => approveProof(e.target.dataset.id));
+            });
+            proofsContainer.querySelectorAll('.reject-btn').forEach(button => {
+                button.addEventListener('click', (e) => rejectProof(e.target.dataset.id));
+            });
+        }
 
-                const studentName = document.getElementById('student-name').value;
-                const studentClass = document.getElementById('student-class').value;
-                const timeLost = document.getElementById('time-lost').value;
-                const lostLocation = document.getElementById('lost-location').value;
-                const itemUniqueDetail = document.getElementById('item-unique-detail').value;
+        function approveProof(proofId) {
+            const proofIndex = proofs.findIndex(p => p.id == proofId);
+            if (proofIndex > -1) {
+                proofs[proofIndex].approved = true;
+                proofs[proofIndex].approvalDate = new Date().toISOString();
+                proofs[proofIndex].approvalCode = generateApprovalCode(); // Gera um código de aprovação
+                localStorage.setItem('itemProofs', JSON.stringify(proofs));
 
-                if (!studentName || !studentClass || !timeLost || !lostLocation || !itemUniqueDetail) {
-                    showMessage(proofMessage, 'Por favor, preencha todos os campos do questionário para comprovar o item.', 'error');
-                    return;
-                }
-
-                const newProof = {
-                    studentName,
-                    studentClass,
-                    timeLost,
-                    lostLocation,
-                    itemUniqueDetail,
-                    submittedAt: new Date().toISOString(),
-                    status: 'pendente'
-                };
-
-                let items = loadItems();
-                const itemIndex = items.findIndex(item => item.id === currentItemForQuestionnaire.id);
-
+                // Marcar o item como reivindicado
+                const itemIndex = items.findIndex(item => item.id == proofs[proofIndex].itemId);
                 if (itemIndex > -1) {
-                    if (!items[itemIndex].proofs) {
-                        items[itemIndex].proofs = [];
-                    }
-                    items[itemIndex].proofs.push(newProof);
-                    saveItems(items);
-                    showMessage(proofMessage, 'Sua comprovação foi enviada para a secretaria! Eles analisarão as informações.', 'success');
-                    proofForm.reset();
-                    currentItemForQuestionnaire = null;
-                    setTimeout(() => {
-                        showSection(studentView);
-                        renderItems(loadItems(), studentItemsContainer, false, studentSearchInput.value, currentFilterCategory);
-                    }, 2000);
-                } else {
-                    showMessage(proofMessage, 'Erro: Item não encontrado para salvar a comprovação. Por favor, tente novamente.', 'error');
+                    items[itemIndex].claimed = true;
+                    items[itemIndex].approvedProofId = proofs[proofIndex].id;
+                    localStorage.setItem('lostAndFoundItems', JSON.stringify(items));
+                    showNotification(`Item '${items[itemIndex].name}' reivindicado com sucesso!`, 'success');
+                    renderStudentItems(); // Atualiza a visualização do aluno
                 }
+
+                showNotification(`Comprovação aprovada! Código de retirada: ${proofs[proofIndex].approvalCode}`, 'success', 8000);
+                updateProofNotificationCount();
+                updateApprovalNotificationBadge();
+                renderProofs(); // Re-renderiza as comprovações pendentes
+            }
+        }
+
+        function rejectProof(proofId) {
+            const proofIndex = proofs.findIndex(p => p.id == proofId);
+            if (proofIndex > -1) {
+                proofs[proofIndex].rejected = true;
+                localStorage.setItem('itemProofs', JSON.stringify(proofs));
+                showNotification('Comprovação rejeitada.', 'info');
+                updateProofNotificationCount();
+                renderProofs(); // Re-renderiza as comprovações pendentes
+            }
+        }
+
+        function generateApprovalCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase(); // Ex: A1B2C3
+        }
+
+        function updateProofNotificationCount() {
+            const pending = proofs.filter(p => !p.approved && !p.rejected).length;
+            if (pending > 0) {
+                proofNotificationCount.textContent = pending;
+                proofNotificationCount.classList.remove('hidden');
+            } else {
+                proofNotificationCount.classList.add('hidden');
+            }
+        }
+
+        function updateApprovalNotificationBadge() {
+            const approvedProofs = proofs.filter(p => p.approved && !p.viewedByStudent);
+            if (approvedProofs.length > 0) {
+                approvalNotificationCount.textContent = approvedProofs.length;
+                approvalNotificationCount.classList.remove('hidden');
+            } else {
+                approvalNotificationCount.classList.add('hidden');
+            }
+        }
+
+        // Simulação de notificação de aprovação para o aluno (ao clicar no ícone)
+        approvalNotificationBtn.addEventListener('click', () => {
+            const approvedProofsForStudent = proofs.filter(p => p.approved && !p.viewedByStudent);
+            if (approvedProofsForStudent.length > 0) {
+                let message = 'Seus itens aprovados para retirada:\n\n';
+                approvedProofsForStudent.forEach(p => {
+                    const item = items.find(i => i.id == p.itemId);
+                    message += `Item: ${item ? item.name : 'Desconhecido'}\n`;
+                    message += `Data de Retirada: ${formatDateTime(p.approvalDate)}\n`;
+                    message += `Código de Retirada: ${p.approvalCode}\n\n`;
+                    p.viewedByStudent = true; // Marca como visualizado
+                });
+                localStorage.setItem('itemProofs', JSON.stringify(proofs));
+                showNotification(message, 'success', 10000); // duração maior
+                updateApprovalNotificationBadge(); // Atualiza o badge
+            } else {
+                showNotification('Você não possui notificações de aprovação no momento.', 'info');
+            }
+        });
+
+
+        // --- Funções da Visualização do Aluno ---
+        function renderStudentItems(searchTerm = '', filterCategory = 'Todos') {
+            studentItemsContainer.innerHTML = '';
+            const filteredItems = items.filter(item => {
+                const matchesSearch = searchTerm === '' ||
+                    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    item.description.toLowerCase().includes(searchTerm.toLowerCase());
+                const matchesCategory = filterCategory === 'Todos' || item.category === filterCategory;
+                return matchesSearch && matchesCategory && !item.claimed; // Aluno vê apenas itens disponíveis
             });
 
-            backToStudentViewBtn.addEventListener('click', () => {
-                showSection(studentView);
-                renderItems(loadItems(), studentItemsContainer, false, studentSearchInput.value, currentFilterCategory);
-                currentItemForQuestionnaire = null;
+            if (filteredItems.length === 0) {
+                noItemsFoundMessage.classList.remove('hidden');
+            } else {
+                noItemsFoundMessage.classList.add('hidden');
+            }
+
+            filteredItems.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'item-card';
+
+                // Renderiza imagem ou placeholder de ícone
+                const itemImageHtml = item.photo
+                    ? `<img src="${item.photo}" alt="${item.name}">`
+                    : `<div class="item-placeholder-icon"><i class="fas fa-box"></i></div>`; // Ícone genérico
+
+                itemCard.innerHTML = `
+                    ${itemImageHtml}
+                    <div class="item-card-content">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <p class="item-meta"><strong>Encontrado em:</strong> ${item.location}</p>
+                        <p class="item-meta"><strong>Categoria:</strong> ${item.category}</p>
+                        <p class="item-meta"><strong>Data Encontrado:</strong> ${formatDateTime(item.foundDate)}</p>
+                        <button class="claim-btn" data-id="${item.id}">Comprovar Posse</button>
+                    </div>
+                `;
+                studentItemsContainer.appendChild(itemCard);
             });
 
-            // --- INÍCIO: Adição dos Itens de Teste (NOVO BLOCO) ---
-            // Verifica se já existem itens no localStorage antes de adicionar os itens de teste
-            if (localStorage.getItem('school_lost_found_items') === null || localStorage.getItem('school_lost_found_items') === '[]') {
-                const testItems = [
-                    {
-                        id: 1,
-                        name: "Celular Samsung",
-                        description: "Celular preto, tela trincada no canto superior esquerdo. Com capa azul.",
-                        location: "Biblioteca",
-                        category: "Eletrônicos",
-                        photo: "https://via.placeholder.com/150/17a2b8/FFFFFF?text=Celular",
-                        foundDate: new Date(2025, 5, 28, 10, 30).toISOString(),
-                        status: "Encontrado",
-                        proofs: []
-                    },
-                    {
-                        id: 2,
-                        name: "Carteira de Estudante",
-                        description: "Carteira vermelha com foto 3x4 do aluno João Silva. Matrícula: 12345.",
-                        location: "Cantina",
-                        category: "Documentos",
-                        photo: "https://via.placeholder.com/150/004080/FFFFFF?text=Documento",
-                        foundDate: new Date(2025, 5, 29, 14, 0).toISOString(),
-                        status: "Encontrado",
-                        proofs: []
-                    },
-                    {
-                        id: 3,
-                        name: "Moletom Cinza",
-                        description: "Moletom cinza com capuz, tamanho M. Marca 'Etec Wear'.",
-                        location: "Quadra Poliesportiva",
-                        category: "Roupas e Acessórios",
-                        photo: "https://via.placeholder.com/150/6c757d/FFFFFF?text=Moletom",
-                        foundDate: new Date(2025, 5, 27, 9, 15).toISOString(),
-                        status: "Encontrado",
-                        proofs: []
-                    },
-                    {
-                        id: 4,
-                        name: "Estojo de Lápis",
-                        description: "Estojo azul marinho, com alguns lápis de cor e canetas dentro.",
-                        location: "Sala 5",
-                        category: "Material Escolar",
-                        photo: "https://via.placeholder.com/150/28a745/FFFFFF?text=Estojo",
-                        foundDate: new Date(2025, 5, 30, 11, 0).toISOString(),
-                        status: "Encontrado",
-                        proofs: []
-                    },
-                    {
-                        id: 5,
-                        name: "Chaveiro ETEC",
-                        description: "Chaveiro com logo da ETEC e uma chave pequena.",
-                        location: "Pátio Principal",
-                        category: "Chaves",
-                        photo: "https://via.placeholder.com/150/dc3545/FFFFFF?text=Chaveiro",
-                        foundDate: new Date(2025, 5, 26, 16, 45).toISOString(),
-                        status: "Encontrado",
-                        proofs: []
-                    },
-                    {
-                        id: 6,
-                        name: "Fone de Ouvido",
-                        description: "Fone de ouvido sem fio, cor branca. Marca 'AudioBlast'.",
-                        location: "Laboratório de Informática",
-                        category: "Eletrônicos",
-                        photo: "https://via.placeholder.com/150/17a2b8/FFFFFF?text=Fone",
-                        foundDate: new Date(2025, 5, 29, 10, 0).toISOString(),
-                        status: "Encontrado",
-                        proofs: []
-                    },
-                    {
-                        id: 7,
-                        name: "Livro de Matemática",
-                        description: "Livro didático de matemática do 2º ano do Ensino Médio. Capa azul clara.",
-                        location: "Sala dos Professores",
-                        category: "Material Escolar",
-                        photo: "https://via.placeholder.com/150/28a745/FFFFFF?text=Livro",
-                        foundDate: new Date(2025, 5, 28, 13, 0).toISOString(),
-                        status: "Encontrado",
-                        proofs: []
-                    },
-                    {
-                        id: 8,
-                        name: "Garrafa Térmica",
-                        description: "Garrafa térmica de inox, 500ml, com adesivo de banda de rock.",
-                        location: "Corredor do Bloco B",
-                        category: "Outros", // Categoria "Outros"
-                        photo: "https://via.placeholder.com/150/6c757d/FFFFFF?text=Garrafa",
-                        foundDate: new Date(2025, 5, 30, 8, 30).toISOString(),
-                        status: "Encontrado",
-                        proofs: []
-                    }
-                ];
-                saveItems(testItems); // Salva os itens de teste
-                console.log("Itens de teste iniciais adicionados!");
+            studentItemsContainer.querySelectorAll('.claim-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = e.target.dataset.id;
+                    selectedItemForProof = items.find(item => item.id == itemId); // Salva o item
+                    showSection('questionnaire-section');
+                    document.getElementById('proof-form').reset(); // Limpa o formulário de comprovação
+                    document.getElementById('proof-message').textContent = '';
+                });
+            });
+        }
 
-                // Adiciona uma categoria customizada de teste se não existir
-                let currentCustomCategories = loadCustomCategories();
-                if (!currentCustomCategories.includes('Instrumentos Musicais')) {
-                    currentCustomCategories.push('Instrumentos Musicais');
-                    saveCustomCategories(currentCustomCategories);
-                    console.log("Categoria 'Instrumentos Musicais' adicionada às categorias customizadas iniciais.");
-                }
+        // Lógica de busca para a visualização do aluno
+        studentSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value;
+            const activeFilterButton = categoryFilterButtonsContainer.querySelector('.filter-button.active');
+            const currentCategoryFilter = activeFilterButton ? activeFilterButton.dataset.category : 'Todos';
+            renderStudentItems(searchTerm, currentCategoryFilter);
+        });
+
+        // Geração dos botões de filtro de categoria
+        function renderCategoryFilterButtons() {
+            categoryFilterButtonsContainer.innerHTML = ''; // Limpa botões existentes
+
+            // Botão "Todos"
+            const allButton = document.createElement('button');
+            allButton.className = 'filter-button all-items-btn active';
+            allButton.textContent = 'Todos';
+            allButton.dataset.category = 'Todos';
+            allButton.addEventListener('click', (e) => {
+                categoryFilterButtonsContainer.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                renderStudentItems(studentSearchInput.value, 'Todos');
+            });
+            categoryFilterButtonsContainer.appendChild(allButton);
+
+            // Botões de categorias dinâmicas
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'filter-button';
+                button.textContent = category;
+                button.dataset.category = category;
+                button.addEventListener('click', (e) => {
+                    categoryFilterButtonsContainer.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    renderStudentItems(studentSearchInput.value, category);
+                });
+                categoryFilterButtonsContainer.appendChild(button);
+            });
+        }
+
+
+        // Formulário de Comprovação
+        const proofForm = document.getElementById('proof-form');
+        proofForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!selectedItemForProof) {
+                showNotification('Nenhum item selecionado para comprovação.', 'error');
+                return;
             }
-            // --- FIM: Adição dos Itens de Teste ---
 
-            // --- INÍCIO: Adição de Usuário Admin Fixo (NOVO BLOCO) ---
-            // Adiciona um usuário admin fixo se não houver nenhum usuário ou se o admin@etec.com não existir
-            let currentUsers = loadUsers();
-            const adminEmail = 'admin@etec.com';
-            const adminPassword = 'admin123'; // Senha simples para testes
+            const studentName = document.getElementById('student-name').value;
+            const studentClass = document.getElementById('student-class').value;
+            const timeLost = document.getElementById('time-lost').value;
+            const lostLocation = document.getElementById('lost-location').value;
+            const uniqueDetail = document.getElementById('item-unique-detail').value;
 
-            if (!currentUsers.some(user => user.email === adminEmail)) {
-                currentUsers.push({ email: adminEmail, password: adminPassword });
-                saveUsers(currentUsers);
-                console.log(`Usuário admin (${adminEmail}) adicionado ao localStorage para testes.`);
-            }
-            // --- FIM: Adição de Usuário Admin Fixo ---
+            const newProof = {
+                id: Date.now(),
+                itemId: selectedItemForProof.id,
+                studentName,
+                studentClass,
+                timeLost,
+                lostLocation,
+                uniqueDetail,
+                approved: false,
+                rejected: false,
+                approvalDate: null,
+                approvalCode: null,
+                viewedByStudent: false // Para saber se o aluno já viu a notificação
+            };
 
+            proofs.push(newProof);
+            localStorage.setItem('itemProofs', JSON.stringify(proofs));
+            showNotification('Sua comprovação foi enviada e aguarda aprovação.', 'info');
+            proofForm.reset();
+            updateProofNotificationCount(); // Atualiza o badge da secretaria
+            showSection('student-view'); // Volta para a tela do aluno
+        });
 
-            // --- Inicialização da Aplicação ---
-            showSection(studentView);
-            renderItems(loadItems(), studentItemsContainer, false, studentSearchInput.value, currentFilterCategory);
-            updateProofNotificationCount();
-            updateApprovalNotificationCount();
-            renderCategoryFilterButtons(); // Garante que os botões de filtro sejam renderizados ao carregar
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStudentItems();
+            renderCategoryOptions(); // Carrega as categorias no select
+            renderCategoryFilterButtons(); // Carrega os botões de filtro
+            updateProofNotificationCount(); // Atualiza o contador de comprovações pendentes
+            updateApprovalNotificationBadge(); // Atualiza o contador de aprovações para o aluno
         });
     </script>
 </body>
