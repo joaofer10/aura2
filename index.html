@@ -3,1673 +3,1532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achados e Perdidos Escolar</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Achados e Perdidos ETEC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    /* Paleta de Cores Base (Opção A - Contraste e Vibrância) */
+    :root {
+        /* Cores do Modo Claro (ajustadas para suavidade e novo brilho) */
+        --primary-color: #3f6ebc;   /* Um azul um pouco mais suave para destaque */
+        --primary-bg: #DDE4ED;     /* Fundo principal: cinza mais escuro para a página toda */
+        --medium-bg: #F0F3F7;     /* Fundo de cards/seções: cinza muito claro, para substituir o branco */
+        --text-dark: #333333;     /* Texto escuro: permanece forte para leitura */
+        --text-light: #666666;    /* Texto mais leve: para descrições ou secundário */
+        --border-color: #c9d2de; /* Cor de bordas para separação suave */
+        --button-primary-bg: #4a77cc; /* Botão primário: um azul que se destaca mas é agradável */
+        --button-secondary-bg: #aebacd; /* Botão secundário: cinza azulado suave */
 
-    <style>
-        /* Variáveis CSS - Paleta de Cores ETEC Dacy Inspired */
-        :root {
-            --primary-color: #004080; /* Azul Marinho Profundo (Principal) */
-            --secondary-color: #17a2b8; /* Ciano/Azul Vibrante (Destaque) */
-            --background-color: #f8f9fa; /* Cinza claro suave (Fundo da Página) */
-            --card-background: #ffffff; /* Branco (Fundo dos Cards/Containers) */
-            --text-color: #343a40; /* Cinza Escuro (Texto Principal) */
-            --border-color: #dee2e6; /* Cinza para Bordas */
-            --hover-color: #0056b3; /* Azul mais escuro para hover */
-            --danger-color: #dc3545; /* Vermelho para ações perigosas */
-            --success-color: #28a745; /* Verde para sucesso */
-            --info-color: #6c757d; /* Azul acinzentado para informações */
-            --light-grey: #e9ecef; /* Um cinza muito leve para fundos de input/toggle */
-            --notification-badge-color: #ff0000; /* Vermelho vibrante para notificações */
-        }
+        /* Cores que podem ser usadas universalmente ou ajustadas por modo */
+        --darker-blue: #1A3B8A; /* Azul escuro para detalhes, mantido para contraste */
+        --red-danger: #F44336;
+        --status-pending: #FFC107; /* Amarelo para pendente */
+        --status-approved: #4CAF50; /* Verde para aprovado */
+        --status-rejected: #F44336; /* Vermelho para rejeitado */
+    }
 
-        /* Reset Básico e Estilos Globais */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    /* Modo Noturno (Contraste e Harmonia) */
+    body.dark-mode {
+        /* Cores do Modo Escuro (ajustadas para contraste e harmonia) */
+        --primary-color: #7abaff;      /* Azul para destaque que brilha no escuro, mas não agride */
+        --primary-bg: #1c2a38;        /* Fundo principal: cinza azulado muito escuro (para o corpo da página) */
+        --medium-bg: #293d50;        /* Fundo de cards/seções: cinza azulado um pouco mais claro que o principal */
+        --header-footer-dark-bg: #151E27; /* NOVO: Fundo mais escuro para cabeçalho e rodapé */
+        --text-dark: #e0e0e0;        /* Texto escuro (agora claro): quase branco */
+        --text-light: #b0b0b0;       /* Texto mais leve (agora claro): cinza claro */
+        --border-color: #3b526b;    /* Cor de bordas para separação sutil */
+        --button-primary-bg: #5f8fd4; /* Botão primário: um azul vibrante para destacar */
+        --button-secondary-bg: #546a81; /* Botão secundário: cinza azulado médio */
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--background-color);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            padding-top: 150px; /* AJUSTADO: Espaço para o header fixo e MAIOR */
-        }
+        /* Adaptando as cores de dark-mode existentes para as novas variáveis */
+        --dark-mode-bg: var(--primary-bg);
+        --dark-mode-container-bg: var(--medium-bg);
+        --dark-mode-header-footer: var(--header-footer-dark-bg); /* Usando a nova variável aqui */
+        --dark-mode-text: var(--text-dark);
+        --dark-mode-text-medium: var(--text-light);
+        --dark-mode-border: var(--border-color);
+        --dark-mode-input-bg: var(--medium-bg);
+        --dark-mode-input-border: var(--border-color);
+        --dark-mode-shadow: rgba(0, 0, 0, 0.5);
+    }
 
-        /* Header */
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1rem 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            height: 150px; /* NOVO: Altura fixa para o cabeçalho */
-            display: flex; /* Para centralizar conteúdo verticalmente */
-            align-items: center; /* Centraliza verticalmente */
-        }
+    /* CSS Geral */
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        background-color: var(--primary-bg); /* Usando a variável */
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        color: var(--text-dark); /* Usando a variável */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 960px;
-            margin: 0 auto;
-            position: relative;
-            width: 100%; /* Ocupa a largura total do header */
-        }
+    .container {
+        background-color: var(--medium-bg); /* Usando a variável */
+        margin: 20px auto;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        max-width: 900px;
+        width: 95%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
+    }
 
-        .main-title-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+    /* Cabeçalho */
+    header {
+        background-color: var(--primary-color); /* Usando a variável */
+        color: #FFFFFF;
+        padding: 15px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 5px solid var(--darker-blue);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
 
+    header h1 {
+        margin: 0;
+        font-size: 2em;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .header-icons {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+    }
+
+    .header-icons .icon-btn {
+        background: none;
+        border: none;
+        color: #FFFFFF;
+        font-size: 1.6em;
+        cursor: pointer;
+        position: relative;
+        transition: color 0.3s ease, transform 0.2s ease;
+    }
+    .header-icons .icon-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .header-icons .notification-count {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background-color: var(--red-danger);
+        color: white;
+        border-radius: 50%;
+        padding: 3px 7px;
+        font-size: 0.75em;
+        font-weight: bold;
+        display: none;
+        min-width: 20px;
+        text-align: center;
+        line-height: 1.2;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Rodapé */
+    footer {
+        background-color: var(--primary-color); /* Usando a variável */
+        color: #FFFFFF;
+        text-align: center;
+        padding: 12px 0;
+        font-size: 0.9em;
+        margin-top: auto;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+        transition: background-color 0.3s ease;
+    }
+
+    /* Classes de exibição de telas */
+    .screen {
+        display: none;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 20px 0;
+    }
+
+    .screen.active {
+        display: flex;
+    }
+
+    /* Estilos gerais para botões */
+    button {
+        padding: 12px 22px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.05em;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        font-family: 'Montserrat', sans-serif;
+        letter-spacing: 0.2px;
+    }
+
+    button.primary {
+        background-color: var(--button-primary-bg); /* Usando a variável */
+        color: white;
+    }
+
+    button.primary:hover {
+        background-color: var(--darker-blue); /* Mantido para hover específico, pode ser ajustado */
+        transform: translateY(-2px);
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    button.secondary {
+        background-color: var(--button-secondary-bg); /* Usando a variável */
+        color: white;
+    }
+
+    button.secondary:hover {
+        background-color: #8A8A8A; /* Pode ser ajustado para var(--button-secondary-bg) mais escuro */
+        transform: translateY(-2px);
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    button.danger {
+        background-color: var(--red-danger);
+        color: white;
+    }
+    button.danger:hover {
+        background-color: #CD3328;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Estilos para campos de input */
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    textarea,
+    select {
+        width: calc(100% - 24px);
+        padding: 12px;
+        margin-bottom: 18px;
+        border: 1px solid var(--border-color); /* Usando a variável */
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 1em;
+        background-color: var(--medium-bg); /* Usando a variável */
+        color: var(--text-dark); /* Usando a variável */
+        transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    input[type="email"]:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--primary-color); /* Usando a variável */
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(45, 91, 255, 0.2); /* Sombra de foco mais suave, pode ser ajustada */
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 90px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-medium); /* Use text-light ou text-dark dependendo do contraste desejado */
+        font-family: 'Roboto', sans-serif;
+    }
+
+    h2, h3 {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--primary-color); /* Usando a variável */
+        margin-bottom: 25px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    h2 { font-size: 1.8em; }
+    h3 { font-size: 1.4em; }
+
+    /* Estilos para Cards de Item (Aluno e Secretaria) */
+    .item-card, .proof-card, .my-proof-item {
+        background-color: var(--medium-bg); /* Usando a variável */
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
+    }
+    .item-card img, .proof-card img, .my-proof-item img {
+        max-width: 100%;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        background-color: var(--border-color); /* Fundo para imagens transparentes */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .item-card h4, .proof-card p, .my-proof-item p {
+        color: var(--text-dark); /* Usando a variável */
+        margin-bottom: 8px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+    }
+    .item-card p, .proof-card small, .my-proof-item small {
+        font-size: 0.9em;
+        color: var(--text-light); /* Usando a variável */
+    }
+    .item-card .primary, .proof-card .primary, .proof-card .danger, .my-proof-item .primary {
+        margin-top: 20px;
+        width: calc(100% - 20px);
+        align-self: center;
+    }
+    .item-card .button-group, .my-proof-item .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    /* Status colors for my-proof-item */
+    .my-proof-item .status-tag {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 0.85em;
+        margin-top: 10px;
+        color: white;
+    }
+
+    .my-proof-item .status-tag.pending {
+        background-color: var(--status-pending);
+        color: var(--text-dark); /* Texto escuro para contraste no amarelo */
+    }
+    .my-proof-item .status-tag.approved {
+        background-color: var(--status-approved);
+    }
+    .my-proof-item .status-tag.rejected {
+        background-color: var(--status-rejected);
+    }
+
+    /* Estilos para Filtros e Busca (Tela Aluno) */
+    .filter-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+    .filter-btn {
+        background-color: var(--border-color); /* Cinza claro para filtros, usando variável */
+        color: var(--text-dark);
+        border: 1px solid var(--border-color);
+        font-weight: 500;
+    }
+    .filter-btn.active {
+        background-color: var(--primary-color); /* Usando a variável */
+        color: white;
+        border-color: var(--primary-color);
+    }
+    .filter-btn:hover:not(.active) {
+        background-color: #D5D5D5; /* Pode ser ajustado para uma variante de border-color */
+    }
+
+    /* Estilos para Notificações */
+    #notificationScreen #notificationMessages, #myProofsScreen #myProofsContainer {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 15px;
+        margin-bottom: 25px;
+        margin-top: 20px;
+    }
+    .notification-item {
+        background-color: var(--medium-bg); /* Usando a variável */
+        border: 1px solid var(--border-color); /* Usando a variável */
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+    .notification-item.unread {
+        background-color: rgba(var(--primary-color-rgb), 0.1); /* Usar RGB para transparência */
+        border-left: 6px solid var(--primary-color);
+        padding-left: 15px;
+    }
+    .notification-item .delete-notification {
+        background: none;
+        border: none;
+        color: var(--red-danger);
+        font-size: 0.95em;
+        cursor: pointer;
+        position: absolute;
+        bottom: 8px;
+        right: 15px;
+        padding: 5px 8px;
+        font-weight: 500;
+        border-radius: 5px;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .notification-item .delete-notification:hover {
+        background-color: rgba(244, 67, 54, 0.1);
+        color: #C0392B;
+    }
+
+    /* Mensagem Global de Feedback */
+    #globalMessage {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 30px 40px;
+        border-radius: 12px;
+        text-align: center;
+        z-index: 1001;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        display: none;
+        animation: fadeInScale 0.3s ease forwards;
+    }
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    #globalMessage p {
+        margin-bottom: 25px;
+        font-size: 1.3em;
+        font-weight: 500;
+    }
+    #globalMessage button {
+        margin: 0 10px;
+    }
+
+    /* Estilos da Área da Secretaria (Tabs) */
+    .secretary-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    .secretary-tabs button {
+        flex-grow: 1;
+        max-width: 220px;
+    }
+
+    /* Formulários internos da secretaria e login */
+    #secretaryLogin form, #addNewItemForm form {
+        max-width: 550px;
+        margin: 35px auto;
+        padding: 30px;
+        background-color: var(--medium-bg); /* Usando a variável */
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .category-checkboxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-bottom: 25px;
+        margin-top: 8px;
+    }
+    .category-checkboxes label {
+        display: flex;
+        align-items: center;
+        font-weight: normal;
+        color: var(--text-light); /* Pode ser text-dark dependendo do contraste */
+    }
+    .category-checkboxes input[type="checkbox"] {
+        margin-right: 8px;
+        width: auto;
+        margin-bottom: 0;
+        transform: scale(1.1);
+    }
+
+    /* Pré-visualização da foto */
+    #itemPhotoPreview {
+        border: 1px solid var(--border-color); /* Usando a variável */
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+
+    /* --- Modo Noturno Melhorado (Contraste e Harmonia) --- */
+    body.dark-mode {
+        background-color: var(--primary-bg); /* Usando a variável do dark mode */
+        color: var(--text-dark); /* Usando a variável do dark mode (que é clara) */
+    }
+    .dark-mode .container {
+        background-color: var(--medium-bg); /* Usando a variável do dark mode */
+        box-shadow: 0 6px 15px var(--dark-mode-shadow);
+    }
+    /* NOVO: Aplica a cor mais escura para o cabeçalho e rodapé no dark mode */
+    .dark-mode header,
+    .dark-mode footer {
+        background-color: var(--header-footer-dark-bg); /* Usa a nova variável mais escura */
+        border-bottom-color: var(--darker-blue); /* Mantido, ajuste se precisar de outra cor */
+    }
+    .dark-mode .header-icons .icon-btn {
+        color: var(--text-dark); /* Usando a variável do dark mode */
+    }
+    .dark-mode h2, .dark-mode h3 {
+        color: var(--primary-color) !important; /* Usando a variável do dark mode */
+    }
+    .dark-mode label {
+        color: var(--text-light); /* Usando a variável do dark mode */
+    }
+    .dark-mode input[type="text"],
+    .dark-mode input[type="password"],
+    .dark-mode input[type="email"],
+    .dark-mode textarea,
+    .dark-mode select {
+        background-color: var(--medium-bg); /* Usando a variável do dark mode */
+        color: var(--text-dark); /* Usando a variável do dark mode */
+        border-color: var(--border-color); /* Usando a variável do dark mode */
+    }
+    .dark-mode input[type="text"]:focus,
+    .dark-mode input[type="password"]:focus,
+    .dark-mode input[type="email"]:focus,
+    .dark-mode textarea:focus,
+    .dark-mode select:focus {
+        border-color: var(--primary-color); /* Usando a variável do dark mode */
+        box-shadow: 0 0 0 3px rgba(122, 186, 255, 0.3); /* Ajustado para o novo primary-color do dark mode */
+    }
+    .dark-mode .filter-buttons button,
+    .dark-mode button.secondary {
+        background-color: var(--button-secondary-bg); /* Usando a variável do dark mode */
+        color: var(--text-dark); /* Usando a variável do dark mode */
+        border-color: var(--border-color); /* Usando a variável do dark mode */
+    }
+    .dark-mode .filter-buttons button:hover:not(.active),
+    .dark-mode button.secondary:hover {
+        background-color: #6A6A70; /* Pode ser ajustado para uma variante do dark mode secondary button */
+    }
+    .dark-mode .filter-btn.active,
+    .dark-mode button.primary {
+        background-color: var(--button-primary-bg); /* Usando a variável do dark mode */
+        border-color: var(--button-primary-bg); /* Usando a variável do dark mode */
+        color: white; /* Ou var(--primary-bg) se quiser mais contraste */
+    }
+    .dark-mode .filter-btn.active:hover,
+    .dark-mode button.primary:hover {
+        background-color: #4A8CF0; /* Pode ser ajustado para uma variante do dark mode primary button */
+    }
+    .dark-mode button.danger {
+        background-color: #D65C50; /* Vermelho adaptado para dark mode */
+    }
+    .dark-mode button.danger:hover {
+        background-color: #B24F44;
+    }
+    .dark-mode .item-card, .dark-mode .proof-card, .dark-mode .my-proof-item,
+    .dark-mode #secretaryLogin form, .dark-mode #addNewItemForm form,
+    .dark-mode #proofsList, .dark-mode #secretaryItemsList, .dark-mode #addNewItemForm {
+        background-color: var(--medium-bg) !important; /* Usando a variável do dark mode */
+        box-shadow: 0 5px 15px var(--dark-mode-shadow);
+    }
+    .dark-mode .item-card h4, .dark-mode .item-card p,
+    .dark-mode .proof-card p, .dark-mode .proof-card strong,
+    .dark-mode .notification-item p, .dark-mode .notification-item strong,
+    .dark-mode .my-proof-item p, .dark-mode .my-proof-item strong {
+        color: var(--text-dark) !important; /* Usando a variável do dark mode */
+    }
+    .dark-mode .item-card img, .dark-mode .proof-card img, .dark-mode .my-proof-item img {
+        background-color: var(--border-color); /* Fundo mais escuro para imagens placeholder */
+    }
+    .dark-mode .notification-item, .dark-mode .my-proof-item {
+        background-color: var(--medium-bg); /* Usando a variável do dark mode */
+        border-color: var(--border-color); /* Usando a variável do dark mode */
+    }
+    .dark-mode .notification-item.unread {
+        background-color: rgba(var(--primary-color-rgb), 0.1); /* Usar RGB para transparência */
+        border-left-color: var(--primary-color); /* Usando a variável do dark mode */
+    }
+    .dark-mode .my-proof-item .status-tag.pending {
+        background-color: var(--status-pending);
+        color: var(--text-dark);
+    }
+    .dark-mode .my-proof-item .status-tag.approved {
+        background-color: var(--status-approved);
+    }
+    .dark-mode .my-proof-item .status-tag.rejected {
+        background-color: var(--status-rejected);
+    }
+    .dark-mode #globalMessage {
+        background-color: rgba(0, 0, 0, 0.95);
+    }
+
+
+    /* Media Queries para Responsividade Geral */
+    @media (max-width: 768px) {
         header h1 {
-            margin: 0;
-            font-weight: 600;
-            font-size: 2.5rem;
-            white-space: nowrap;
+            font-size: 1.6em;
         }
-
-        .header-main-logo {
-            height: 70px; /* Ajustado para acompanhar o novo tamanho do cabeçalho */
-            width: auto;
-            object-fit: contain;
+        .header-icons {
+            gap: 12px;
         }
-
-        /* Container para os ícones à direita */
-        .header-icons-right {
-            display: flex;
-            gap: 15px; /* Espaço entre os ícones */
-            position: absolute;
-            right: 20px; /* AJUSTADO: um pouco mais para o canto, mas com margem */
-            top: 50%; /* Alinha verticalmente no centro do header */
-            transform: translateY(-50%); /* Ajuste fino para o centro */
+        .header-icons .icon-btn {
+            font-size: 1.3em;
         }
-
-        .secretary-icon-btn,
-        .notification-icon-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: color 0.3s ease; /* AJUSTADO: Apenas transição de cor */
-            padding: 0.5rem;
-            position: relative;
+        .container {
+            margin: 10px auto;
+            padding: 18px;
+            width: 98%;
+            border-radius: 10px;
         }
-
-        .secretary-icon-btn:hover,
-        .notification-icon-btn:hover {
-            color: var(--secondary-color);
-        }
-
-        /* Main Content */
-        main {
-            flex-grow: 1;
-            padding: 2rem 1rem;
-            max-width: 900px;
-            margin: 2rem auto;
-            background-color: var(--card-background);
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Seções Escondidas/Ativas */
-        section {
-            display: none;
-            padding: 1.5rem;
-        }
-
-        section.active {
-            display: block;
-        }
-
-        section.hidden {
-            display: none !important; /* Força ocultar */
-        }
-
-        /* Estilo para Títulos das Seções */
-        h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            font-size: 2rem;
-        }
-
-        .section-description {
-            text-align: center;
-            color: var(--info-color);
-            margin-bottom: 1.5rem;
-            font-size: 1rem;
-        }
-
-        /* Contêiner de Autenticação */
-        .auth-container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: var(--card-background);
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .auth-toggle {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-radius: 5px;
-            overflow: hidden;
-            border: 1px solid var(--secondary-color);
-        }
-
-        .auth-toggle button {
-            flex: 1;
-            padding: 0.8rem 1rem;
-            border: none;
-            background-color: transparent;
-            color: var(--secondary-color);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .auth-toggle button.active {
-            background-color: var(--secondary-color);
-            color: white;
-            font-weight: 600;
-        }
-
-        .auth-form {
-            display: none;
-        }
-
-        .auth-form.active {
-            display: block;
-        }
-
-        /* Grupos de Input */
-        .input-group {
-            margin-bottom: 1rem;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 400;
-            color: var(--text-color);
-        }
-
-        .input-group input[type="email"],
-        .input-group input[type="password"],
-        .input-group input[type="text"],
-        .input-group textarea,
-        .input-group input[type="datetime-local"],
-        .input-group input[type="file"],
-        .input-group select, /* NOVO: Estilo para o select de categoria */
-        .search-bar input[type="text"] {
+        .secretary-tabs button {
+            max-width: unset;
             width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            background-color: var(--light-grey);
-            color: var(--text-color);
+            padding: 10px 15px;
+            font-size: 0.95em;
         }
-
-        .input-group input:focus,
-        .input-group textarea:focus,
-        .input-group select:focus, /* NOVO: Estilo para o select de categoria */
-        .search-bar input:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.2);
+        #foundItemsList, #pendingProofsContainer, #registeredItemsContainer, #myProofsContainer {
+            grid-template-columns: 1fr;
         }
-
-        textarea {
-            resize: vertical;
+        .item-card img, .proof-card img, .my-proof-item img {
+            height: 140px;
         }
-
-        .input-hint {
-            font-size: 0.85rem;
-            color: var(--info-color);
-            margin-top: 0.3rem;
+        #secretaryLogin form, #addNewItemForm form {
+            padding: 20px;
+            margin: 25px auto;
+            border-radius: 10px;
         }
-
-        /* Botões */
-        button[type="submit"],
-        .dashboard-nav button,
-        .secondary-btn,
-        .claim-btn {
-            display: block;
-            width: 100%;
-            padding: 0.8rem 1.2rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 1.5rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+        h2 { font-size: 1.5em; margin-bottom: 20px; }
+        h3 { font-size: 1.2em; margin-bottom: 20px; }
+        button {
+            padding: 10px 18px;
+            font-size: 1em;
         }
-
-        button[type="submit"]:hover,
-        .claim-btn:hover {
-            background-color: var(--hover-color);
-            transform: translateY(-2px);
+        input[type="text"], input[type="password"], input[type="email"], textarea, select {
+            padding: 10px;
+            margin-bottom: 12px;
+            border-radius: 6px;
         }
-
-        .secondary-btn { /* Ajustes para o botão "Voltar" */
-            background-color: var(--info-color);
-            margin-top: 1rem; /* Menos margem para não ficar muito separado */
+        label {
+            margin-bottom: 6px;
+            font-size: 0.95em;
         }
-        .secondary-btn:hover {
-            background-color: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        .dashboard-nav {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .dashboard-nav button {
-            flex: 1;
-            min-width: 180px;
-            margin-top: 0;
-            background-color: var(--primary-color);
-            position: relative;
-        }
-
-        .dashboard-nav button:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .dashboard-nav button.logout {
-            background-color: var(--danger-color);
-        }
-
-        .dashboard-nav button.logout:hover {
-            background-color: #c82333;
-        }
-
-        /* Badge de Notificação */
-        .notification-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: var(--notification-badge-color);
-            color: white;
-            border-radius: 50%;
-            padding: 2px 7px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            min-width: 20px;
-            text-align: center;
-            line-height: 1.2;
-            box-shadow: 0 0 0 2px var(--card-background);
-        }
-
-        .notification-badge.hidden {
-            display: none;
-        }
-
-        /* Mensagens de Feedback */
-        .message {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            padding: 0.5rem;
-            border-radius: 4px;
-            font-weight: 500;
-        }
-
-        .message.error {
-            color: var(--danger-color);
-            background-color: rgba(220, 53, 69, 0.1);
-            border: 1px solid var(--danger-color);
-        }
-
-        .message.success {
-            color: var(--success-color);
-            background-color: rgba(40, 167, 69, 0.1);
-            border: 1px solid var(--success-color);
-        }
-
-        .message.info {
-            color: var(--info-color);
-            background-color: rgba(108, 117, 125, 0.1);
-            border: 1px solid var(--info-color);
-        }
-
-        /* Dashboard da Secretaria */
-        .dashboard-content {
-            display: none;
-            padding: 1rem 0;
-        }
-
-        .dashboard-content.active-content {
-            display: block;
-        }
-
-        /* Grid de Itens e Comprovações */
-        .items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .item-card {
-            background-color: var(--card-background);
-            border: 1px solid var(--border-color);
+        .notification-item, .my-proof-item {
+            padding: 15px;
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 10px;
         }
-
-        .item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        #globalMessage {
+            padding: 25px;
+            border-radius: 12px;
         }
-
-        .item-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: contain; /* Mantém a proporção e encaixa */
-            background-color: var(--light-grey);
-            border-bottom: 1px solid var(--border-color);
-            padding: 5px; /* Adiciona um pequeno padding para respiro */
+        #globalMessage p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
         }
-
-        /* Estilo para ícone de item padrão */
-        .item-card .item-placeholder-icon {
-            width: 100%;
-            height: 180px;
-            background-color: var(--light-grey);
-            color: var(--info-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 4rem;
-            border-bottom: 1px solid var(--border-color);
-            padding: 5px;
-        }
-
-        .item-card-content {
-            padding: 1rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .item-card h3 {
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .item-card p {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .item-card .item-meta {
-            font-size: 0.8rem;
-            color: var(--info-color);
-            margin-top: auto;
-            padding-top: 0.8rem;
-            border-top: 1px dashed var(--border-color);
-            margin-top: 1rem;
-        }
-
-        .item-card .item-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .item-card .item-actions button {
-            flex: 1;
-            padding: 0.6rem;
-            font-size: 0.9rem;
-            margin-top: 0;
-        }
-
-        .item-card .item-actions .edit-btn {
-            background-color: var(--secondary-color);
-        }
-
-        .item-card .item-actions .edit-btn:hover {
-            background-color: #118ba1;
-        }
-
-        .item-card .item-actions .delete-btn {
-            background-color: var(--danger-color);
-        }
-
-        .item-card .item-actions .delete-btn:hover {
-            background-color: #c82333;
-        }
-
-        /* Estilos para cards de comprovação */
-        .proof-card {
-            background-color: var(--card-background);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column; /* Garante que os elementos se empilhem verticalmente */
-            align-items: center; /* Centraliza o conteúdo horizontalmente no card */
-            text-align: center; /* Centraliza o texto */
-            gap: 0.75rem;
-        }
-
-        .proof-card h3 {
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .proof-card p {
-            font-size: 0.95rem;
-            color: var(--text-color);
-            margin-bottom: 0;
-            text-align: left; /* Volta o texto dos parágrafos para a esquerda */
-            width: 100%; /* Garante que os parágrafos ocupem a largura total */
-        }
-
-        .proof-card .proof-meta {
-            font-size: 0.8rem;
-            color: var(--info-color);
-            margin-top: auto;
-        }
-
-        .proof-card .proof-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .proof-card .proof-actions button {
-            flex: 1;
-            padding: 0.6rem;
-            font-size: 0.9rem;
-            margin-top: 0;
-        }
-
-        .proof-card .proof-actions .approve-btn {
-            background-color: var(--success-color);
-        }
-        .proof-card .proof-actions .approve-btn:hover {
-            background-color: #218838;
-        }
-
-        .proof-card .proof-actions .reject-btn {
-            background-color: var(--danger-color);
-        }
-        .proof-card .proof-actions .reject-btn:hover {
-            background-color: #c82333;
-        }
-
-        /* Estilo para a miniatura do item dentro do card de comprovação (NOVO) */
-        .proof-item-thumbnail {
-            width: 100px; /* Largura fixa */
-            height: 100px; /* Altura fixa */
-            object-fit: contain; /* Garante que a imagem se ajuste sem cortar */
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            margin: 0 auto 10px auto; /* Centraliza e adiciona margem inferior */
-            display: block; /* Garante que ocupe sua própria linha */
-            background-color: var(--light-grey);
-            padding: 5px; /* Pequeno padding para respiro */
-        }
-
-        /* Estilo para o placeholder de ícone no card de comprovação (NOVO) */
-        .proof-item-placeholder-icon {
-            width: 100px;
-            height: 100px;
-            background-color: var(--light-grey);
-            color: var(--info-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3rem; /* Tamanho do ícone */
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            margin: 0 auto 10px auto;
-        }
-
-
-        /* Pré-visualização da Foto */
-        .photo-preview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 1rem;
-            border: 1px dashed var(--border-color);
-            border-radius: 5px;
-            display: block;
-            object-fit: contain; /* Garante que a imagem caiba sem cortar */
-            background-color: var(--light-grey);
-        }
-
-        .photo-preview.hidden {
-            display: none;
-        }
-
-        /* Visualização para Alunos */
-        .search-bar {
-            margin-bottom: 1.5rem;
-            display: flex; /* MODIFICADO: Para alinhar search e filter */
-            gap: 10px; /* Espaço entre os elementos de busca/filtro */
-            flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
-        }
-
-        .search-bar input[type="text"] {
-            flex-grow: 1; /* Permite que o input de busca cresça */
-        }
-
-        /* NOVO: Estilos para os botões de filtro */
-        .filter-buttons {
-            display: flex;
-            flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
-            justify-content: flex-start; /* Alinha à esquerda na seção do aluno */
-            gap: 10px; /* Espaço entre os botões */
-            margin-top: 1.5rem; /* Espaço acima dos botões de filtro */
-            margin-bottom: 1.5rem; /* Espaço abaixo dos botões de filtro */
-            width: 100%; /* Ocupa a largura total da barra de busca */
-        }
-
-        .filter-button {
-            background-color: var(--card-background); /* Fundo branco ou cinza claro */
-            color: var(--text-color); /* Texto escuro */
-            border: 1px solid var(--border-color); /* Borda sutil */
-            border-radius: 20px; /* Cantos arredondados, estilo 'pill' */
-            padding: 0.6rem 1.2rem;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap; /* Impede que o texto quebre */
-        }
-
-        .filter-button:hover {
-            background-color: var(--light-grey); /* Leve escurecimento no hover */
-            border-color: var(--secondary-color); /* Borda destaca no hover */
-        }
-
-        .filter-button.active {
-            background-color: var(--secondary-color); /* Fundo vibrante para ativo */
-            color: white; /* Texto branco */
-            border-color: var(--secondary-color);
-            font-weight: 600; /* Negrito para ativo */
-            box-shadow: 0 2px 5px rgba(23, 162, 184, 0.2); /* Sombra para destaque */
-        }
-
-        /* Estilo para o botão "Todos" ou "Resetar Filtro" */
-        .filter-button.all-items-btn {
-            background-color: var(--info-color); /* Cor diferente para "Todos" */
-            color: white;
-            border-color: var(--info-color);
-        }
-
-        .filter-button.all-items-btn:hover {
-            background-color: #5a6268; /* Escurece no hover */
-            border-color: #5a6268;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 1.5rem 1rem;
-            margin-top: 2rem;
-            background-color: var(--primary-color);
-            color: white;
-            font-size: 0.9rem;
-        }
-
-        .footer-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .footer-text {
-            margin: 0;
-            font-style: italic;
-        }
-
-        .aura-text {
-            /* Pode ser usado para dar uma cor diferente se quiser, mas por enquanto, manterá a cor do texto pai */
-        }
-
-        .footer-logo {
-            height: 50px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        /* NOVO: Estilos para o Modal de Notificação / Toast */
-        .app-notification {
-            position: fixed;
-            bottom: 20px; /* Posição na parte inferior */
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--primary-color);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 2000; /* Acima de tudo */
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            opacity: 0; /* Começa invisível */
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-            min-width: 250px;
-            max-width: 90%; /* Limita a largura em telas menores */
-        }
-
-        .app-notification.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(-10px); /* Leve movimento para cima */
-        }
-
-        .app-notification.hidden {
-            display: none; /* Mantém oculto com display none quando não está visível */
-        }
-
-        .app-notification p {
-            margin: 0;
-            flex-grow: 1;
-        }
-
-        .app-notification .close-notification-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
-        }
-
-        .app-notification.success {
-            background-color: var(--success-color);
-        }
-
-        .app-notification.error {
-            background-color: var(--danger-color);
-        }
-
-        .app-notification.info {
-            background-color: var(--info-color);
-        }
-
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            body {
-                padding-top: 120px; /* AJUSTADO: Ajuste para o cabeçalho em telas menores */
-            }
-            header {
-                height: 120px; /* AJUSTADO: Altura do cabeçalho em telas menores */
-            }
-            header .header-content {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                gap: 0;
-            }
-            .main-title-area {
-                position: static;
-                transform: none;
-                flex-grow: 1;
-                justify-content: center;
-                gap: 5px;
-            }
-            header h1 {
-                font-size: 1.8rem; /* Ajustado para mobile */
-                text-align: center;
-            }
-            .header-main-logo {
-                height: 50px; /* Ajustado para mobile */
-            }
-            .header-icons-right { /* Ajustado para mobile */
-                position: static;
-                transform: none;
-                margin-left: auto;
-                gap: 10px;
-            }
-
-            main {
-                margin: 1rem auto;
-                padding: 1rem;
-            }
-
-            .auth-container {
-                padding: 1.5rem;
-            }
-
-            .dashboard-nav {
-                flex-direction: column;
-            }
-
-            .dashboard-nav button {
-                width: 100%;
-            }
-
-            .items-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .search-bar { /* MODIFICADO: Ajuste responsivo para search bar */
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .filter-buttons { /* MODIFICADO: Ajuste responsivo para filter buttons */
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h2 {
-                font-size: 1.5rem;
-            }
-
-            button[type="submit"],
-            .dashboard-nav button,
-            .secondary-btn {
-                padding: 0.7rem 1rem;
-                font-size: 0.95rem;
-            }
-
-            .input-group input,
-            .input-group textarea,
-            .input-group select, /* NOVO: Estilo para o select de categoria */
-            .search-bar input {
-                padding: 0.7rem;
-                font-size: 0.9rem;
-            }
-            .notification-badge {
-                top: -5px;
-                right: -5px;
-                font-size: 0.7rem;
-                padding: 1px 5px;
-                min-width: 18px;
-            }
-            .filter-button { /* NOVO: Tamanho menor para botões em telas muito pequenas */
-                padding: 0.5rem 1rem;
-                font-size: 0.85rem;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
     <header>
-        <div class="header-content">
-            <div class="main-title-area">
-                <h1>Achados e Perdidos</h1>
-                <img src="images/logo-etec.png" alt="Logo da ETEC" class="header-main-logo">
-            </div>
-            <div class="header-icons-right">
-                <button id="approval-notification-btn" title="Notificações de Aprovação" class="notification-icon-btn">
-                    <i class="fas fa-check-circle"></i>
-                    <span id="approval-notification-count" class="notification-badge hidden">0</span>
-                </button>
-                <button id="secretary-login-btn" title="Acesso da Secretaria" class="secretary-icon-btn">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-            </div>
+        <h1>Achados e perdidos</h1>
+        <div class="header-icons">
+            <button class="icon-btn" id="darkModeToggle" title="Modo Noturno">🌙</button>
+            <button class="icon-btn" id="notificationBtn" title="Notificações">🔔<span class="notification-count" id="notificationCount">0</span></button>
+            <button class="icon-btn" id="profileBtn" title="Acesso Secretaria">⚙️</button>
         </div>
     </header>
 
-    <main>
-        <section id="student-view" class="active">
-            <h2>Itens Encontrados na Escola</h2>
-            <div class="search-bar">
-                <input type="text" id="student-search-input" placeholder="Pesquisar por nome ou descrição do item...">
-                <div id="category-filter-buttons" class="filter-buttons">
+    <main class="container">
+        <section id="studentHome" class="screen active">
+            <h2 style="text-align: center;">itens encontrados na escola</h2>
+            <input type="text" id="searchItem" placeholder="pesquisar por nome ou descrição do item...">
+
+            <div class="filter-buttons">
+                <button class="secondary filter-btn active" data-category="todos">todos</button>
+                <button class="secondary filter-btn" data-category="material escolar">material escolar</button>
+                <button class="secondary filter-btn" data-category="eletronicos">eletronicos</button>
+                <button class="secondary filter-btn" data-category="roupas">roupas</button>
+                <button class="secondary filter-btn" data-category="documentos">documentos</button>
+                <button class="secondary filter-btn" data-category="outros">outros</button>
+            </div>
+
+            <div id="foundItemsList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
                 </div>
-            </div>
-            <div id="student-items-container" class="items-grid">
-            </div>
-            <p id="no-items-found" class="message hidden">Nenhum item encontrado com a sua pesquisa.</p>
+            <p id="noFoundItemsMessage" style="text-align: center; color: #777; margin-top: 20px; display: none;">Nenhum item encontrado no momento.</p>
+
+            <button class="secondary" id="viewMyProofsBtn" style="display: block; margin: 30px auto 0;">Minhas Solicitações de Posse</button>
         </section>
 
-        <section id="auth-section" class="hidden">
-            <div class="auth-container">
-                <h2>Acesso da Secretaria</h2>
-                <div class="auth-toggle">
-                    <button id="show-login" class="active">Login</button>
-                    <button id="show-register">Cadastro</button>
+        <section id="proofOfOwnership" class="screen">
+            <h2 style="text-align: center;">comprovar posse do item</h2>
+            <p style="text-align: center; color: var(--text-medium); margin-bottom: 20px;">preencha as informações abaixo para confirmar posse</p>
+
+            <form id="proofForm">
+                <input type="hidden" id="proofItemId">
+                <label for="studentName">seu nome completo <span style="color: var(--red-danger);">*</span></label>
+                <input type="text" id="studentName" required>
+
+                <label for="studentClass">sua turma <span style="color: var(--red-danger);">*</span></label>
+                <input type="text" id="studentClass" required>
+
+                <label for="lostLocation">onde você acha que perdeu <span style="color: var(--red-danger);">*</span></label>
+                <input type="text" id="lostLocation" placeholder="ex: patio, sala de informatica..." required>
+
+                <label for="itemCharacteristic">descreva um detalhe específico do item que NÃO está visível na foto:</label>
+                <textarea id="itemCharacteristic" placeholder="ex: arranhão, sigla, etc."></textarea>
+
+                <div style="display: flex; gap: 15px; justify-content: center; margin-top: 25px;">
+                    <button type="submit" class="primary">comprovar posse</button>
+                    <button type="button" class="secondary" onclick="showScreen('studentHome')">voltar para o inicio</button>
                 </div>
-
-                <form id="login-form" class="auth-form active">
-                    <div class="input-group">
-                        <label for="login-email">E-mail:</label>
-                        <input type="email" id="login-email" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="login-password">Senha:</label>
-                        <input type="password" id="login-password" minlength="8" required>
-                    </div>
-                    <button type="submit">Entrar</button>
-                    <p id="login-message" class="message"></p>
-                </form>
-
-                <form id="register-form" class="auth-form">
-                    <div class="input-group">
-                        <label for="register-email">E-mail:</label>
-                        <input type="email" id="register-email" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="register-password">Senha:</label>
-                        <input type="password" id="register-password" minlength="8" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="register-confirm-password">Confirmar Senha:</label>
-                        <input type="password" id="register-confirm-password" minlength="8" required>
-                    </div>
-                    <button type="submit">Cadastrar</button>
-                    <p id="register-message" class="message"></p>
-                </form>
-                    <button type="button" id="back-to-student-from-auth" class="secondary-btn">Voltar para Itens</button>
-            </div>
-        </section>
-
-        <section id="secretary-dashboard" class="hidden">
-            <nav class="dashboard-nav">
-                <button id="view-items-btn">Ver Itens Cadastrados</button>
-                <button id="add-item-btn">Cadastrar Novo Item</button>
-                <button id="view-proofs-btn">
-                    Ver Comprovações <span id="proof-notification-count" class="notification-badge hidden">0</span>
-                </button>
-                <button id="logout-btn" class="logout">Sair</button>
-            </nav>
-
-            <div id="item-list-view" class="dashboard-content active-content">
-                <h2>Itens Cadastrados</h2>
-                <div id="items-container" class="items-grid">
-                </div>
-                <p id="no-secretary-items-message" class="message hidden info">Nenhum item cadastrado ainda pela secretaria.</p>
-            </div>
-
-            <div id="add-item-view" class="dashboard-content">
-                <h2>Cadastrar Novo Item</h2>
-                <form id="add-item-form">
-                    <div class="input-group">
-                        <label for="item-name">Nome do Item:</label>
-                        <input type="text" id="item-name" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="item-description">Descrição:</label>
-                        <textarea id="item-description" rows="4" required></textarea>
-                    </div>
-                    <div class="input-group">
-                        <label for="item-location">Local Onde Foi Encontrado:</label>
-                        <input type="text" id="item-location" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="item-category">Categoria:</label>
-                        <select id="item-category" required>
-                            <option value="">Selecione uma categoria</option>
-                            </select>
-                        <input type="text" id="item-custom-category" placeholder="Nome da nova categoria" class="hidden" style="margin-top: 10px;">
-                    </div>
-
-                    <div class="input-group">
-                        <label for="item-photo">Foto do Item:</label>
-                        <input type="file" id="item-photo" accept="image/*" capture="environment">
-                        <img id="item-photo-preview" src="#" alt="Pré-visualização da Foto" class="photo-preview hidden">
-                        <p class="input-hint">Use a câmera ou selecione uma imagem.</p>
-                    </div>
-                    <button type="submit">Adicionar Item</button>
-                    <p id="add-item-message" class="message"></p>
-                </form>
-            </div>
-
-            <div id="proofs-list-view" class="dashboard-content">
-                <h2>Comprovações Pendentes</h2>
-                <div id="proofs-container" class="items-grid">
-                </div>
-                <p id="no-proofs-message" class="message hidden info">Nenhuma comprovação pendente no momento.</p>
-            </div>
-
-        </section>
-
-        <section id="questionnaire-section" class="hidden">
-            <h2>Comprovar Posse do Item</h2>
-            <p class="section-description">Preencha as informações abaixo para nos ajudar a verificar se o item pertence a você.</p>
-            <form id="proof-form">
-                <div class="input-group">
-                    <label for="student-name">Seu Nome Completo:</label>
-                    <input type="text" id="student-name" required>
-                </div>
-                <div class="input-group">
-                    <label for="student-class">Sua Turma:</label>
-                    <input type="text" id="student-class" required>
-                </div>
-                <div class="input-group">
-                    <label for="time-lost">📅 Qual a data ou horário aproximado que você perdeu o item?</label>
-                    <input type="datetime-local" id="time-lost" required>
-                </div>
-                    <div class="input-group">
-                    <label for="lost-location">Onde você acha que perdeu o item?</label>
-                    <input type="text" id="lost-location" placeholder="Ex: Pátio, Sala 5, Quadra" required>
-                </div>
-                <div class="input-group">
-                    <label for="item-unique-detail">Descreva um detalhe específico do item que NÃO está visível na foto:</label>
-                    <textarea id="item-unique-detail" rows="3" placeholder="Ex: Possui um pequeno arranhão na lateral, tem um adesivo de estrela atrás, cor do forro interno." required></textarea>
-                </div>
-                <button type="submit">Enviar Comprovação</button>
-                <p id="proof-message" class="message"></p>
-                <button type="button" id="back-to-student-view" class="secondary-btn">Volta para Itens</button>
             </form>
         </section>
+
+        <section id="notificationScreen" class="screen">
+            <h2 style="text-align: center;">Suas Notificações</h2>
+            <p id="noNotificationsMessage" style="text-align: center; color: var(--text-light); margin-top: 20px; display: none;">Nenhuma notificação no momento.</p>
+            <div id="notificationMessages" style="background-color: var(--medium-bg); padding: 25px; border-radius: 12px; margin-top: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.06);">
+                </div>
+            <button class="secondary" onclick="showScreen('studentHome')" style="display: block; margin: 30px auto 0;">Voltar ao Início</button>
+        </section>
+
+        <section id="myProofsScreen" class="screen">
+            <h2 style="text-align: center;">Minhas Solicitações de Posse</h2>
+            <p id="noMyProofsMessage" style="text-align: center; color: var(--text-light); grid-column: 1 / -1; margin-top: 20px; display: none;">Nenhuma solicitação de posse enviada ainda.</p>
+            <div id="myProofsContainer" style="background-color: var(--medium-bg); padding: 25px; border-radius: 12px; margin-top: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                </div>
+            <button class="secondary" onclick="showScreen('studentHome')" style="display: block; margin: 30px auto 0;">Voltar ao Início</button>
+        </section>
+
+
+        <section id="secretaryLogin" class="screen">
+            <h2 style="text-align: center;">acesso da secretaria</h2>
+            <form id="loginForm">
+                <label for="secretaryEmail">e-mail:</label>
+                <input type="email" id="secretaryEmail" required>
+
+                <label for="secretaryPassword">senha:</label>
+                <input type="password" id="secretaryPassword" required>
+
+                <div style="display: flex; gap: 15px; justify-content: center; margin-top: 25px;">
+                    <button type="submit" class="primary">login</button>
+                    <button type="button" class="secondary" onclick="showScreen('studentHome')">voltar para o início</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="secretaryDashboard" class="screen">
+            <h2 style="text-align: center;">acesso da secretaria</h2>
+            <div class="secretary-tabs">
+                <button class="primary" id="viewProofsBtn">ver comprovações</button>
+                <button class="primary" id="viewItemsBtn">ver itens cadastrados</button>
+                <button class="primary" id="addNewItemBtn">cadastrar novo item</button>
+            </div>
+
+            <div id="proofsList" style="background-color: var(--medium-bg); padding: 25px; border-radius: 12px; margin-top: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.06);">
+                <h3 style="text-align: center;">Comprovações de Posse Pendentes</h3>
+                <div id="pendingProofsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px;">
+                    </div>
+                <p id="noProofsMessage" style="text-align: center; color: var(--text-light); display: none;">Nenhuma comprovação pendente no momento.</p>
+            </div>
+
+            <div id="secretaryItemsList" style="background-color: var(--medium-bg); padding: 25px; border-radius: 12px; margin-top: 25px; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.06);">
+                <h3 style="text-align: center;">Itens Cadastrados</h3>
+                <div id="registeredItemsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px;">
+                    </div>
+                <p id="noRegisteredItemsMessage" style="text-align: center; color: var(--text-light); display: none;">Nenhum item cadastrado ainda.</p>
+            </div>
+
+            <div id="addNewItemForm" style="background-color: var(--medium-bg); padding: 25px; border-radius: 12px; margin-top: 25px; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.06);">
+                <h3 style="text-align: center;">Cadastrar Novo Item</h3>
+                <form id="itemRegistrationForm">
+                    <input type="hidden" id="editItemId">
+
+                    <label for="itemName">nome do item: <span style="color: var(--red-danger);">*</span></label>
+                    <input type="text" id="itemName" required>
+
+                    <label for="itemDescription">descrição do item: <span style="color: var(--red-danger);">*</span></label>
+                    <textarea id="itemDescription" required></textarea>
+
+                    <label for="itemLocation">local onde foi encontrado: <span style="color: var(--red-danger);">*</span></label>
+                    <input type="text" id="itemLocation" required>
+
+                    <label style="margin-top: 15px;">selecione uma ou mais categorias do item: <span style="color: var(--red-danger);">*</span></label>
+                    <div class="category-checkboxes">
+                        <label><input type="checkbox" name="itemCategory" value="material escolar"> material escolar</label>
+                        <label><input type="checkbox" name="itemCategory" value="eletronicos"> eletronicos</label>
+                        <label><input type="checkbox" name="itemCategory" value="roupas"> roupas</label>
+                        <label><input type="checkbox" name="itemCategory" value="documentos"> documentos</label>
+                        <label><input type="checkbox" name="itemCategory" value="outros"> outros</label>
+                    </div>
+
+                    <label for="itemPhoto">foto do item (opcional):</label>
+                    <input type="file" id="itemPhoto" accept="image/*" style="margin-bottom: 20px;">
+                    <img id="itemPhotoPreview" src="#" alt="Pré-visualização da foto" style="max-width: 180px; max-height: 180px; display: none; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.08);">
+
+                    <button type="submit" class="primary" id="addItemSubmitBtn">adicionar item</button>
+                </form>
+            </div>
+        </section>
+
+        <div id="globalMessage" style="display: none;">
+            <p id="globalMessageText"></p>
+            <div style="display: flex; justify-content: center; gap: 20px;">
+                <button class="secondary" id="globalMessageUndoBtn" style="display: none;">Desfazer</button>
+                <button class="primary" id="globalMessageContinueBtn">Continuar</button>
+            </div>
+        </div>
     </main>
 
-    <div id="app-notification" class="app-notification hidden">
-        <p id="notification-text"></p>
-        <button class="close-notification-btn">&times;</button>
-    </div>
-
     <footer>
-        <div class="footer-content">
-            <p class="footer-text">Desenvolvido com <span style="color: #e25555;">&hearts;</span> por <span class="aura-text">Projeto Aura</span></p>
-            <p class="footer-text">© 2024 ETEC Dacy - Todos os direitos reservados.</p>
-        </div>
+        <p>Desenvolvido com ❤️ por Projeto Aura</p>
+        <p>© 2025 ETEC Darcy - Todos os direitos reservados.</p>
     </footer>
 
     <script>
-        // Funções auxiliares para manipulação do DOM e exibição de seções
-        function showSection(sectionId) {
-            document.querySelectorAll('section').forEach(section => {
-                section.classList.remove('active');
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
-            document.getElementById(sectionId).classList.add('active');
-            window.scrollTo(0, 0); // Volta para o topo da página ao mudar de seção
+        // --- Funções de Utilidade para LocalStorage ---
+        function getFromLocalStorage(key, defaultValue = []) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.error("Erro ao ler do localStorage para a chave", key, e);
+                return defaultValue;
+            }
         }
 
-        // NOVO: Função auxiliar para formatar datas (RESOLVE "INVALID DATE")
-        function formatDateTime(dateTimeString) {
-            if (!dateTimeString) return 'Data/Hora não informada';
-            const date = new Date(dateTimeString);
+        function saveToLocalStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                console.error("Erro ao salvar no localStorage para a chave", key, e);
+            }
+        }
 
-            // Verifica se a data é válida
-            if (isNaN(date.getTime())) {
-                // Tenta um parser manual para datetime-local se o direto falhar,
-                // que pode ocorrer se o fuso horário ou formato não for estritamente ISO
-                const [datePart, timePart] = dateTimeString.split('T');
-                if (!datePart || !timePart) return 'Data/Hora Inválida'; // Adiciona verificação para partes
-                const [year, month, day] = datePart.split('-').map(Number);
-                const [hours, minutes] = timePart.split(':').map(Number);
-                // Mês é 0-indexed no construtor de Date
-                const validDate = new Date(year, month - 1, day, hours, minutes);
-                if (isNaN(validDate.getTime())) {
-                    return 'Data/Hora Inválida';
+        // --- Variáveis Globais (Carregadas do localStorage) ---
+        let itemsFound = getFromLocalStorage('itemsFound', []);
+        let proofsOfOwnership = getFromLocalStorage('proofsOfOwnership', []);
+        let notifications = getFromLocalStorage('notifications', []);
+
+        // --- DADOS DUMMY PARA TESTE (Apenas para demonstração, remova em produção) ---
+        if (itemsFound.length === 0) {
+            itemsFound = [
+                {
+                    id: 'item_1678880000001',
+                    name: 'Celular Samsung',
+                    description: 'Celular preto, tela trincada no canto superior. Modelo antigo.',
+                    location: 'Pátio Principal',
+                    categories: ['eletronicos'],
+                    photo: 'https://via.placeholder.com/180/2D5BFF/FFFFFF?text=Celular'
+                },
+                {
+                    id: 'item_1678880000002',
+                    name: 'Estojo de Lápis',
+                    description: 'Estojo azul com zíper amarelo, contém 3 lápis e uma borracha.',
+                    location: 'Sala 5',
+                    categories: ['material escolar'],
+                    photo: 'https://via.placeholder.com/180/F44336/FFFFFF?text=Estojo'
+                },
+                {
+                    id: 'item_1678880000003',
+                    name: 'Jaqueta Jeans',
+                    description: 'Jaqueta jeans tamanho M, com um pequeno rasgo no ombro esquerdo.',
+                    location: 'Quadra de Esportes',
+                    categories: ['roupas'],
+                    photo: 'https://via.placeholder.com/180/4CAF50/FFFFFF?text=Jaqueta'
+                },
+                {
+                    id: 'item_1678880000004',
+                    name: 'Carteira de Identidade',
+                    description: 'RG em nome de Maria Silva, contém um chip colado na parte de trás.',
+                    location: 'Biblioteca',
+                    categories: ['documentos'],
+                    photo: '' // Exemplo sem foto
+                },
+                {
+                    id: 'item_1678880000005',
+                    name: 'Chaveiro de Coruja',
+                    description: 'Chaveiro de metal em formato de coruja, com duas chaves pequenas.',
+                    location: 'Corredor Principal',
+                    categories: ['outros'],
+                    photo: 'https://via.placeholder.com/180/FFEB3B/000000?text=Chaveiro'
                 }
-                return validDate.toLocaleString('pt-BR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            }
-            return date.toLocaleString('pt-BR', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
+            ];
+            saveToLocalStorage('itemsFound', itemsFound);
+        }
+
+        if (notifications.length === 0) {
+            addNotification({
+                to: 'secretaria',
+                title: 'Bem-vindo!',
+                message: 'Bem-vindo ao sistema de Achados e Perdidos. Fique atento às notificações!',
+                type: 'system',
+                read: false,
+                timestamp: new Date().toISOString()
+            });
+             addNotification({
+                to: 'aluno',
+                title: 'Item Encontrado!',
+                message: 'Um livro de matemática foi encontrado na biblioteca. Verifique se é seu!',
+                type: 'found_item_alert',
+                read: false,
+                timestamp: new Date(Date.now() - 3600 * 1000).toISOString() // 1 hora atrás
             });
         }
-
-
-        // NOVO: Função para mostrar notificações customizadas (SUBSTITUI ALERTS)
-        const appNotification = document.getElementById('app-notification');
-        const notificationText = document.getElementById('notification-text');
-        const closeNotificationBtn = appNotification.querySelector('.close-notification-btn');
-
-        let notificationTimeout;
-
-        function showNotification(message, type = 'info', duration = 3000) {
-            clearTimeout(notificationTimeout); // Limpa qualquer timeout anterior
-            notificationText.textContent = message;
-            appNotification.className = `app-notification show ${type}`; // Adiciona tipo e mostra
-            appNotification.style.display = 'flex'; // Garante que esteja visível (override hidden class)
-
-            notificationTimeout = setTimeout(() => {
-                appNotification.classList.remove('show');
-                // Espera a transição terminar antes de ocultar completamente
-                setTimeout(() => {
-                    appNotification.classList.add('hidden');
-                    appNotification.style.display = 'none'; // Oculta com display none
-                }, 500); // Duração da transição CSS
-            }, duration);
-
-            closeNotificationBtn.onclick = () => {
-                clearTimeout(notificationTimeout);
-                appNotification.classList.remove('show');
-                setTimeout(() => {
-                    appNotification.classList.add('hidden');
-                    appNotification.style.display = 'none';
-                }, 500);
-            };
-        }
-
-
-        // Mock de dados para simular backend (LocalStorage)
-        // Adicionando um usuário padrão para facilitar o teste da secretaria
-        let users = JSON.parse(localStorage.getItem('secretaryUsers')) || [
-            { email: 'secretaria@etec.com', password: 'etecpassword' } // Usuário padrão para teste
-        ];
-        // Salvando o usuário padrão se ele não existir
-        if (!JSON.parse(localStorage.getItem('secretaryUsers'))) {
-             localStorage.setItem('secretaryUsers', JSON.stringify(users));
-        }
-
-
-        let items = JSON.parse(localStorage.getItem('lostAndFoundItems')) || [];
-        let proofs = JSON.parse(localStorage.getItem('itemProofs')) || [];
-        let categories = JSON.parse(localStorage.getItem('itemCategories')) || ["Material Escolar", "Eletrônicos", "Roupas", "Documentos", "Outros"];
-
-
-        // Variáveis de estado
-        let loggedInUser = null;
-        let selectedItemForProof = null; // Para guardar o item que o aluno está tentando comprovar
-
-        // Referências DOM
-        const secretaryLoginBtn = document.getElementById('secretary-login-btn');
-        const backToStudentViewBtn = document.getElementById('back-to-student-view');
-        const backToStudentFromAuthBtn = document.getElementById('back-to-student-from-auth');
-
-        // Autenticação
-        const showLoginBtn = document.getElementById('show-login');
-        const showRegisterBtn = document.getElementById('show-register');
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
-        const loginMessage = document.getElementById('login-message');
-        const registerMessage = document.getElementById('register-message');
-
-        // Dashboard da Secretaria
-        const viewItemsBtn = document.getElementById('view-items-btn');
-        const addItemBtn = document.getElementById('add-item-btn');
-        const viewProofsBtn = document.getElementById('view-proofs-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        const itemsContainer = document.getElementById('items-container');
-        const proofsContainer = document.getElementById('proofs-container');
-        const addItemForm = document.getElementById('add-item-form');
-        const itemPhotoInput = document.getElementById('item-photo');
-        const itemPhotoPreview = document.getElementById('item-photo-preview');
-        const addItemMessage = document.getElementById('add-item-message');
-        const proofNotificationCount = document.getElementById('proof-notification-count');
-        const approvalNotificationCount = document.getElementById('approval-notification-count');
-        const approvalNotificationBtn = document.getElementById('approval-notification-btn');
-        const noProofsMessage = document.getElementById('no-proofs-message');
-        const noSecretaryItemsMessage = document.getElementById('no-secretary-items-message');
-
-        // Formulário de Adicionar Item
-        const itemCategorySelect = document.getElementById('item-category');
-        const itemCustomCategoryInput = document.getElementById('item-custom-category');
-
-
-        // Visualização do Aluno
-        const studentItemsContainer = document.getElementById('student-items-container');
-        const studentSearchInput = document.getElementById('student-search-input');
-        const noItemsFoundMessage = document.getElementById('no-items-found');
-        const categoryFilterButtonsContainer = document.getElementById('category-filter-buttons');
-
-
-        // Event Listeners Globais
-        secretaryLoginBtn.addEventListener('click', () => showSection('auth-section'));
-        backToStudentViewBtn.addEventListener('click', () => showSection('student-view'));
-        backToStudentFromAuthBtn.addEventListener('click', () => showSection('student-view'));
-
-
-        // --- Funções de Autenticação e Navegação do Dashboard ---
-        showLoginBtn.addEventListener('click', () => {
-            showLoginBtn.classList.add('active');
-            showRegisterBtn.classList.remove('active');
-            loginForm.classList.add('active');
-            registerForm.classList.remove('active');
-            loginMessage.textContent = '';
-        });
-
-        showRegisterBtn.addEventListener('click', () => {
-            showRegisterBtn.classList.add('active');
-            showLoginBtn.classList.remove('active');
-            registerForm.classList.add('active');
-            loginForm.classList.remove('active');
-            registerMessage.textContent = '';
-        });
-
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-
-            const user = users.find(u => u.email === email && u.password === password);
-
-            if (user) {
-                loggedInUser = user;
-                showNotification('Login bem-sucedido!', 'success'); // SUBSTITUI ALERT
-                showSection('secretary-dashboard');
-                renderDashboardItems(); // Exibe os itens ao logar
-                updateProofNotificationCount();
-                updateApprovalNotificationBadge();
-            } else {
-                showNotification('Credenciais inválidas.', 'error'); // SUBSTITUI ALERT
-            }
-        });
-
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('register-confirm-password').value;
-
-            if (password !== confirmPassword) {
-                showNotification('As senhas não coincidem.', 'error'); // SUBSTITUI ALERT
-                return;
-            }
-            if (users.some(u => u.email === email)) {
-                showNotification('Este e-mail já está cadastrado.', 'error'); // SUBSTITUI ALERT
-                return;
-            }
-
-            users.push({ email, password });
-            localStorage.setItem('secretaryUsers', JSON.stringify(users));
-            showNotification('Cadastro realizado com sucesso! Faça login.', 'success'); // SUBSTITUI ALERT
-            showLoginBtn.click(); // Volta para a tela de login
-        });
-
-        logoutBtn.addEventListener('click', () => {
-            loggedInUser = null;
-            showNotification('Logout realizado.', 'info'); // SUBSTITUI ALERT
-            showSection('student-view'); // Volta para a tela do aluno
-            renderStudentItems(); // Re-renderiza os itens para o aluno
-            // Limpa os campos de login/cadastro
-            loginForm.reset();
-            registerForm.reset();
-            itemPhotoPreview.classList.add('hidden'); // Oculta a preview da foto ao deslogar
-            itemPhotoInput.value = ''; // Limpa o input de arquivo
-        });
-
-        // --- Funções do Dashboard da Secretaria ---
-        viewItemsBtn.addEventListener('click', () => {
-            document.querySelectorAll('.dashboard-content').forEach(content => content.classList.remove('active-content'));
-            document.getElementById('item-list-view').classList.add('active-content');
-            renderDashboardItems();
-        });
-
-        addItemBtn.addEventListener('click', () => {
-            document.querySelectorAll('.dashboard-content').forEach(content => content.classList.remove('active-content'));
-            document.getElementById('add-item-view').classList.add('active-content');
-            addItemForm.reset(); // Limpa o formulário ao abrir
-            itemPhotoPreview.src = '#'; // Garante que a src esteja vazia
-            itemPhotoPreview.classList.add('hidden'); // Oculta a preview
-            itemPhotoInput.value = ''; // Limpa o input de arquivo
-            renderCategoryOptions(); // Garante que as categorias estejam atualizadas
-            itemCustomCategoryInput.classList.add('hidden'); // Oculta campo de categoria customizada
-        });
-
-        viewProofsBtn.addEventListener('click', () => {
-            document.querySelectorAll('.dashboard-content').forEach(content => content.classList.remove('active-content'));
-            document.getElementById('proofs-list-view').classList.add('active-content');
-            renderProofs();
-        });
-
-        // Lógica para adicionar nova categoria
-        itemCategorySelect.addEventListener('change', () => {
-            if (itemCategorySelect.value === 'new-category') {
-                itemCustomCategoryInput.classList.remove('hidden');
-                itemCustomCategoryInput.setAttribute('required', 'required');
-            } else {
-                itemCustomCategoryInput.classList.add('hidden');
-                itemCustomCategoryInput.removeAttribute('required');
-            }
-        });
-
-        function renderCategoryOptions() {
-            itemCategorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                itemCategorySelect.appendChild(option);
-            });
-            const newCategoryOption = document.createElement('option');
-            newCategoryOption.value = 'new-category';
-            newCategoryOption.textContent = 'Adicionar Nova Categoria';
-            itemCategorySelect.appendChild(newCategoryOption);
-            localStorage.setItem('itemCategories', JSON.stringify(categories));
-        }
-
-
-        // Pré-visualização da imagem no formulário de adicionar item
-        itemPhotoInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    itemPhotoPreview.src = e.target.result;
-                    itemPhotoPreview.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                itemPhotoPreview.src = '#';
-                itemPhotoPreview.classList.add('hidden');
-            }
-        });
-
-        addItemForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('item-name').value;
-            const description = document.getElementById('item-description').value;
-            const location = document.getElementById('item-location').value;
-            let category = itemCategorySelect.value;
-            const photo = itemPhotoPreview.src === '#' ? '' : itemPhotoPreview.src; // Pega a base64 da imagem
-
-            // Se for nova categoria, usa o valor do campo customizado
-            if (category === 'new-category') {
-                category = itemCustomCategoryInput.value.trim();
-                if (category && !categories.includes(category)) {
-                    categories.push(category);
-                    renderCategoryOptions(); // Atualiza a lista de categorias
-                } else if (!category) {
-                    showNotification('Nome da nova categoria não pode ser vazio.', 'error');
-                    return;
+        // Dados dummy para comprovações, incluindo diferentes status
+        if (proofsOfOwnership.length === 0) {
+            proofsOfOwnership = [
+                {
+                    id: 'proof_1678880000010',
+                    itemId: 'item_1678880000001',
+                    itemName: 'Celular Samsung',
+                    studentName: 'João Silva',
+                    studentClass: '3º INFO B',
+                    lostLocation: 'Pátio',
+                    itemCharacteristic: 'Trincado no canto superior direito',
+                    status: 'pendente',
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    id: 'proof_1678880000011',
+                    itemId: 'item_1678880000002',
+                    itemName: 'Estojo de Lápis',
+                    studentName: 'Maria Santos',
+                    studentClass: '1º ADM A',
+                    lostLocation: 'Sala 5',
+                    itemCharacteristic: 'Contém um adesivo de estrela dourada por dentro',
+                    status: 'aprovado',
+                    timestamp: new Date(Date.now() - 86400 * 1000).toISOString() // 1 dia atrás
+                },
+                {
+                    id: 'proof_1678880000012',
+                    itemId: 'item_1678880000003',
+                    itemName: 'Jaqueta Jeans',
+                    studentName: 'Pedro Souza',
+                    studentClass: '2º MEC C',
+                    lostLocation: 'Quadra',
+                    itemCharacteristic: 'Etiqueta com "P.S." bordado',
+                    status: 'rejeitado',
+                    timestamp: new Date(Date.now() - 2 * 86400 * 1000).toISOString() // 2 dias atrás
                 }
+            ];
+            saveToLocalStorage('proofsOfOwnership', proofsOfOwnership);
+        }
+        // --- FIM DADOS DUMMY ---
+
+        // --- Funções de Navegação e UI ---
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            // Se a tela de notificação for mostrada, renderiza seu conteúdo
+            if (screenId === 'notificationScreen') {
+                renderNotificationScreenContent();
+            } else if (screenId === 'myProofsScreen') { // Renderiza minhas comprovações
+                renderMyProofs();
             }
+            // Resetar scroll para o topo ao mudar de tela
+            window.scrollTo(0, 0);
+        }
 
+        // --- Sistema de Notificações ---
+        function addNotification(notification) {
+            // Garante que timestamp e read sejam definidos se não existirem
+            notification.timestamp = notification.timestamp || new Date().toISOString();
+            notification.read = typeof notification.read === 'boolean' ? notification.read : false;
+            notifications.push(notification);
+            saveToLocalStorage('notifications', notifications);
+            updateNotificationCount();
+        }
 
-            const newItem = {
-                id: Date.now(), // ID único baseado no timestamp
-                name,
-                description,
-                location,
-                category,
-                photo,
-                foundDate: new Date().toISOString(), // Data de quando foi cadastrado/encontrado
-                claimed: false,
-                approvedProofId: null // ID da comprovação aprovada, se houver
-            };
-
-            items.push(newItem);
-            localStorage.setItem('lostAndFoundItems', JSON.stringify(items));
-            showNotification('Item adicionado com sucesso!', 'success'); // SUBSTITUI ALERT
-            addItemForm.reset();
-            itemPhotoPreview.src = '#'; // Reseta a src
-            itemPhotoPreview.classList.add('hidden');
-            itemPhotoInput.value = '';
-            renderStudentItems(); // Atualiza a lista para o aluno também
-            renderDashboardItems(); // Atualiza a lista para a secretaria
-            renderCategoryFilterButtons(); // Atualiza botões de filtro para novas categorias
-        });
-
-        function renderDashboardItems() {
-            itemsContainer.innerHTML = '';
-            if (items.length === 0) {
-                noSecretaryItemsMessage.classList.remove('hidden');
-                itemsContainer.classList.add('hidden'); // Esconde o grid se não houver itens
-                return;
+        function updateNotificationCount() {
+            // Conta apenas notificações não lidas e que não sejam 'system' ou 'proof_response' da secretaria (assumindo que o aluno vê)
+            // A lógica de "to" pode ser expandida para usuários reais, aqui é mais para ilustração
+            const unreadNotifications = notifications.filter(n => !n.read && n.to !== 'secretaria'); // Alunos não veem notificações da secretaria
+            const countElement = document.getElementById('notificationCount');
+            if (unreadNotifications.length > 0) {
+                countElement.textContent = unreadNotifications.length;
+                countElement.style.display = 'block';
             } else {
-                noSecretaryItemsMessage.classList.add('hidden');
-                itemsContainer.classList.remove('hidden'); // Mostra o grid
+                countElement.style.display = 'none';
             }
+        }
 
-            items.forEach(item => {
-                const itemCard = document.createElement('div');
-                itemCard.className = 'item-card';
+        function renderNotificationScreenContent() { // Antiga showNotificationArea adaptada para a tela
+            const notificationMessages = document.getElementById('notificationMessages');
+            const noNotificationsMessageElement = document.getElementById('noNotificationsMessage'); // Obtenha a referência ANTES de limpar
 
-                // Renderiza imagem ou placeholder de ícone
-                const itemImageHtml = item.photo
-                    ? `<img src="${item.photo}" alt="${item.name}">`
-                    : `<div class="item-placeholder-icon"><i class="fas fa-box"></i></div>`; // Ícone genérico
+            notificationMessages.innerHTML = ''; // Limpa antes de adicionar
 
-                itemCard.innerHTML = `
-                    ${itemImageHtml}
-                    <div class="item-card-content">
-                        <h3>${item.name}</h3>
-                        <p>${item.description}</p>
-                        <p class="item-meta"><strong>Encontrado em:</strong> ${item.location}</p>
-                        <p class="item-meta"><strong>Categoria:</strong> ${item.category}</p>
-                        <p class="item-meta"><strong>Data Encontrado:</strong> ${formatDateTime(item.foundDate)}</p>
-                        <p class="item-meta"><strong>Status:</strong> ${item.claimed ? 'Reivindicado' : 'Disponível'}</p>
-                        <div class="item-actions">
-                            <button class="edit-btn" data-id="${item.id}">Editar</button>
-                            <button class="delete-btn" data-id="${item.id}">Excluir</button>
-                        </div>
-                    </div>
-                `;
-                itemsContainer.appendChild(itemCard);
-            });
+            // Filtra as notificações para o "aluno" (ignorando as da secretaria para esta tela)
+            const studentNotifications = notifications.filter(n => n.to !== 'secretaria').reverse(); // Exibe as mais recentes primeiro
 
-            // Adicionar event listeners para botões de editar/excluir (lógica ainda não implementada)
-            itemsContainer.querySelectorAll('.edit-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    showNotification(`Funcionalidade de Editar item ${e.target.dataset.id} ainda não implementada.`, 'info');
-                });
-            });
-            itemsContainer.querySelectorAll('.delete-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    // Substituição de 'confirm' por notificação customizada com confirmação
-                    showNotification(`Deseja realmente excluir o item "${items.find(i => i.id == e.target.dataset.id)?.name || 'desconhecido'}"?`, 'info', 5000);
-                    // Um modal de confirmação real seria melhor aqui, mas para manter a funcionalidade:
-                    if (confirm('Tem certeza que deseja excluir este item? Esta ação é irreversível.')) {
-                         deleteItem(e.target.dataset.id);
-                         showNotification('Item excluído com sucesso!', 'success');
+            if (studentNotifications.length === 0) {
+                if (noNotificationsMessageElement) {
+                    noNotificationsMessageElement.style.display = 'block';
+                }
+            } else {
+                if (noNotificationsMessageElement) {
+                    noNotificationsMessageElement.style.display = 'none';
+                }
+                studentNotifications.forEach((n, index) => {
+                    // Importante: o índice aqui é do array filtrado/invertido, não do array `notifications` original.
+                    // Precisamos de um jeito de referenciar a notificação original para exclusão.
+                    // Uma forma é usar o ID da notificação se tivéssemos um. Por enquanto, faremos uma busca.
+                    const originalNotification = notifications.find(origN => origN.timestamp === n.timestamp && origN.title === n.title);
+                    const originalIndex = originalNotification ? notifications.indexOf(originalNotification) : -1;
+
+                    const notificationDiv = document.createElement('div');
+                    notificationDiv.classList.add('notification-item');
+                    if (!n.read) {
+                        notificationDiv.classList.add('unread');
                     }
+                    notificationDiv.innerHTML = `
+                        <p><strong>${n.title}</strong></p>
+                        <p>${n.message}</p>
+                        <small>${new Date(n.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</small>
+                        ${originalIndex !== -1 ? `<button class="delete-notification" data-original-index="${originalIndex}">Apagar</button>` : ''}
+                    `;
+                    notificationMessages.appendChild(notificationDiv);
                 });
-            });
-        }
-
-        function deleteItem(itemId) {
-            items = items.filter(item => item.id != itemId); // Usar != para ID string/number
-            localStorage.setItem('lostAndFoundItems', JSON.stringify(items));
-            renderDashboardItems();
-            renderStudentItems(); // Atualiza também a visualização do aluno
-        }
-
-
-        function renderProofs() {
-            proofsContainer.innerHTML = '';
-            const pendingProofs = proofs.filter(p => !p.approved && !p.rejected);
-
-            if (pendingProofs.length === 0) {
-                noProofsMessage.classList.remove('hidden');
-                proofsContainer.classList.add('hidden'); // Oculta o grid se não houver comprovações
-                return;
-            } else {
-                noProofsMessage.classList.add('hidden');
-                proofsContainer.classList.remove('hidden');
             }
 
-            pendingProofs.forEach(proof => {
-                const itemRelated = items.find(item => item.id == proof.itemId);
-                const itemThumbnailHtml = itemRelated && itemRelated.photo
-                    ? `<img src="${itemRelated.photo}" alt="${itemRelated.name}" class="proof-item-thumbnail">`
-                    : `<div class="proof-item-placeholder-icon"><i class="fas fa-box"></i></div>`; // Ícone genérico para item sem foto
-
-                const proofCard = document.createElement('div');
-                proofCard.className = 'proof-card';
-                proofCard.innerHTML = `
-                    ${itemThumbnailHtml}
-                    <h3>Comprovação para ${itemRelated ? itemRelated.name : 'Item Desconhecido'}</h3>
-                    <p><strong>Aluno:</strong> ${proof.studentName}</p>
-                    <p><strong>Turma:</strong> ${proof.studentClass}</p>
-                    <p><strong>Data/Hora da Perda:</strong> ${formatDateTime(proof.timeLost)}</p>
-                    <p><strong>Local da Perda:</strong> ${proof.lostLocation}</p>
-                    <p><strong>Detalhe Específico:</strong> ${proof.uniqueDetail}</p>
-                    <div class="proof-actions">
-                        <button class="approve-btn" data-id="${proof.id}">Aprovar e Notificar</button>
-                        <button class="reject-btn" data-id="${proof.id}">Rejeitar</button>
-                    </div>
-                `;
-                proofsContainer.appendChild(proofCard);
-            });
-
-            // Adicionar event listeners para botões de aprovar/rejeitar
-            proofsContainer.querySelectorAll('.approve-btn').forEach(button => {
-                button.addEventListener('click', (e) => approveProof(e.target.dataset.id));
-            });
-            proofsContainer.querySelectorAll('.reject-btn').forEach(button => {
-                button.addEventListener('click', (e) => rejectProof(e.target.dataset.id));
-            });
+            // Marcar todas as notificações VISÍVEIS como lidas ao abrir o painel
+            studentNotifications.forEach(n => n.read = true);
+            saveToLocalStorage('notifications', notifications); // Salva todas as notificações com o status atualizado
+            updateNotificationCount(); // Atualiza o contador após marcar como lidas
         }
 
-        function approveProof(proofId) {
-            const proofIndex = proofs.findIndex(p => p.id == proofId);
-            if (proofIndex > -1) {
-                proofs[proofIndex].approved = true;
-                proofs[proofIndex].approvalDate = new Date().toISOString();
-                proofs[proofIndex].approvalCode = generateApprovalCode(); // Gera um código de aprovação
-                localStorage.setItem('itemProofs', JSON.stringify(proofs));
 
-                // Marcar o item como reivindicado
-                const itemIndex = items.findIndex(item => item.id == proofs[proofIndex].itemId);
-                if (itemIndex > -1) {
-                    items[itemIndex].claimed = true;
-                    items[itemIndex].approvedProofId = proofs[proofIndex].id;
-                    localStorage.setItem('lostAndFoundItems', JSON.stringify(items));
-                    showNotification(`Item '${items[itemIndex].name}' reivindicado com sucesso!`, 'success');
-                    renderStudentItems(); // Atualiza a visualização do aluno
+        document.getElementById('notificationMessages').addEventListener('click', (event) => {
+            if (event.target.classList.contains('delete-notification')) {
+                const originalIndex = parseInt(event.target.dataset.originalIndex); // Corrigido para originalIndex
+                if (!isNaN(originalIndex) && originalIndex >= 0 && originalIndex < notifications.length) {
+                    // Remover a notificação pelo índice original
+                    notifications.splice(originalIndex, 1);
+                    saveToLocalStorage('notifications', notifications);
+                    renderNotificationScreenContent(); // Recarrega a lista de notificações na tela
                 }
-
-                showNotification(`Comprovação aprovada! Código de retirada: ${proofs[proofIndex].approvalCode}`, 'success', 8000);
-                updateProofNotificationCount();
-                updateApprovalNotificationBadge();
-                renderProofs(); // Re-renderiza as comprovações pendentes
-            }
-        }
-
-        function rejectProof(proofId) {
-            const proofIndex = proofs.findIndex(p => p.id == proofId);
-            if (proofIndex > -1) {
-                proofs[proofIndex].rejected = true;
-                localStorage.setItem('itemProofs', JSON.stringify(proofs));
-                showNotification('Comprovação rejeitada.', 'info');
-                updateProofNotificationCount();
-                renderProofs(); // Re-renderiza as comprovações pendentes
-            }
-        }
-
-        function generateApprovalCode() {
-            return Math.random().toString(36).substring(2, 8).toUpperCase(); // Ex: A1B2C3
-        }
-
-        function updateProofNotificationCount() {
-            const pending = proofs.filter(p => !p.approved && !p.rejected).length;
-            if (pending > 0) {
-                proofNotificationCount.textContent = pending;
-                proofNotificationCount.classList.remove('hidden');
-            } else {
-                proofNotificationCount.classList.add('hidden');
-            }
-        }
-
-        function updateApprovalNotificationBadge() {
-            const approvedProofs = proofs.filter(p => p.approved && !p.viewedByStudent);
-            if (approvedProofs.length > 0) {
-                approvalNotificationCount.textContent = approvedProofs.length;
-                approvalNotificationCount.classList.remove('hidden');
-            } else {
-                approvalNotificationCount.classList.add('hidden');
-            }
-        }
-
-        // Simulação de notificação de aprovação para o aluno (ao clicar no ícone)
-        approvalNotificationBtn.addEventListener('click', () => {
-            const approvedProofsForStudent = proofs.filter(p => p.approved && !p.viewedByStudent);
-            if (approvedProofsForStudent.length > 0) {
-                let message = 'Seus itens aprovados para retirada:\n\n';
-                approvedProofsForStudent.forEach(p => {
-                    const item = items.find(i => i.id == p.itemId);
-                    message += `Item: ${item ? item.name : 'Desconhecido'}\n`;
-                    message += `Data de Retirada: ${formatDateTime(p.approvalDate)}\n`;
-                    message += `Código de Retirada: ${p.approvalCode}\n\n`;
-                    p.viewedByStudent = true; // Marca como visualizado
-                });
-                localStorage.setItem('itemProofs', JSON.stringify(proofs));
-                showNotification(message, 'success', 10000); // duração maior
-                updateApprovalNotificationBadge(); // Atualiza o badge
-            } else {
-                showNotification('Você não possui notificações de aprovação no momento.', 'info');
             }
         });
 
+        // --- Renderização de Minhas Comprovações de Posse (Aluno) ---
+        function renderMyProofs() {
+            const container = document.getElementById('myProofsContainer');
+            const noMyProofsMessageElement = document.getElementById('noMyProofsMessage'); // Obtenha a referência ANTES de limpar
 
-        // --- Funções da Visualização do Aluno ---
-        function renderStudentItems(searchTerm = '', filterCategory = 'Todos') {
-            studentItemsContainer.innerHTML = '';
-            const filteredItems = items.filter(item => {
-                const matchesSearch = searchTerm === '' ||
-                    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    item.description.toLowerCase().includes(searchTerm.toLowerCase());
-                const matchesCategory = filterCategory === 'Todos' || item.category === filterCategory;
-                return matchesSearch && matchesCategory && !item.claimed; // Aluno vê apenas itens disponíveis
+            container.innerHTML = '';
+            // Em um sistema real com login, filtraríamos por ID de aluno
+            // Por enquanto, exibiremos todas as comprovações para demonstração
+            const studentProofs = proofsOfOwnership.slice().reverse(); // Copia e inverte para mostrar as mais recentes primeiro
+
+            if (studentProofs.length === 0) {
+                if (noMyProofsMessageElement) {
+                    noMyProofsMessageElement.style.display = 'block';
+                }
+            } else {
+                if (noMyProofsMessageElement) {
+                    noMyProofsMessageElement.style.display = 'none';
+                }
+                studentProofs.forEach(proof => {
+                    const itemAssociated = itemsFound.find(item => item.id === proof.itemId);
+                    const proofItem = document.createElement('div');
+                    proofItem.classList.add('my-proof-item');
+
+                    let statusClass = '';
+                    let statusText = '';
+                    switch (proof.status) {
+                        case 'pendente':
+                            statusClass = 'pending';
+                            statusText = 'Pendente';
+                            break;
+                        case 'aprovado':
+                            statusClass = 'approved';
+                            statusText = 'Aprovado';
+                            break;
+                        case 'rejeitado':
+                            statusClass = 'rejected';
+                            statusText = 'Rejeitado';
+                            break;
+                    }
+
+                    proofItem.innerHTML = `
+                        ${itemAssociated && itemAssociated.photo ? `<img src="${itemAssociated.photo}" alt="${itemAssociated.name}">` : `<div style="width: 100%; height: 160px; background-color: #ccc; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: #666; margin-bottom: 15px; font-size: 0.9em;">Item sem Imagem ou não encontrado</div>`}
+                        <p><strong>Item:</strong> ${proof.itemName}</p>
+                        <p><strong>Sua Turma:</strong> ${proof.studentClass}</p>
+                        <p><strong>Local Perdido:</strong> ${proof.lostLocation}</p>
+                        <p><strong>Status:</strong> <span class="status-tag ${statusClass}">${statusText}</span></p>
+                        <small>Enviado em: ${new Date(proof.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</small>
+                    `;
+                    container.appendChild(proofItem);
+                });
+            }
+        }
+
+
+        // --- Mensagem Global de Feedback (com Desfazer/Continuar) ---
+        function showGlobalMessage(message, showUndo = false, undoCallback = null, continueCallback = null) {
+            const globalMessage = document.getElementById('globalMessage');
+            document.getElementById('globalMessageText').textContent = message;
+            const undoBtn = document.getElementById('globalMessageUndoBtn');
+            const continueBtn = document.getElementById('globalMessageContinueBtn');
+
+            if (showUndo && undoCallback) {
+                undoBtn.style.display = 'inline-block';
+                // Remove listeners antigos antes de adicionar novos
+                undoBtn.onclick = null;
+                undoBtn.onclick = () => {
+                    undoCallback();
+                    globalMessage.style.display = 'none';
+                };
+            } else {
+                undoBtn.style.display = 'none';
+            }
+
+            // Remove listeners antigos antes de adicionar novos
+            continueBtn.onclick = null;
+            continueBtn.onclick = () => {
+                if (continueCallback) continueCallback();
+                globalMessage.style.display = 'none';
+            };
+
+            globalMessage.style.display = 'flex'; // Usar flex para centralizar conteúdo
+        }
+
+        // --- Event Listeners Globais ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNotificationCount();
+            renderFoundItems(); // Carrega os itens na tela inicial do aluno
+
+            document.getElementById('notificationBtn').addEventListener('click', () => {
+                showScreen('notificationScreen'); // Leva para a nova tela de notificações
             });
+            document.getElementById('profileBtn').addEventListener('click', () => {
+                showScreen('secretaryLogin');
+            });
+            document.getElementById('viewMyProofsBtn').addEventListener('click', () => { // Novo botão para minhas comprovações
+                showScreen('myProofsScreen');
+            });
+
+
+            // Modo noturno
+            document.getElementById('darkModeToggle').addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                // Salvar preferência no localStorage
+                if (document.body.classList.contains('dark-mode')) {
+                    localStorage.setItem('darkMode', 'enabled');
+                } else {
+                    localStorage.setItem('darkMode', 'disabled');
+                }
+            });
+
+            // Carregar preferência de dark mode ao iniciar
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // --- Funções da Tela Inicial do Aluno ---
+        function renderFoundItems(filter = 'todos', searchTerm = '') {
+            const container = document.getElementById('foundItemsList');
+            container.innerHTML = '';
+            let filteredItems = itemsFound;
+
+            if (filter !== 'todos') {
+                filteredItems = filteredItems.filter(item => item.categories.includes(filter));
+            }
+
+            if (searchTerm) {
+                const lowerCaseSearch = searchTerm.toLowerCase();
+                filteredItems = filteredItems.filter(item =>
+                    item.name.toLowerCase().includes(lowerCaseSearch) ||
+                    item.description.toLowerCase().includes(lowerCaseSearch) ||
+                    item.location.toLowerCase().includes(lowerCaseSearch) ||
+                    item.categories.some(cat => cat.toLowerCase().includes(lowerCaseSearch))
+                );
+            }
 
             if (filteredItems.length === 0) {
-                noItemsFoundMessage.classList.remove('hidden');
+                document.getElementById('noFoundItemsMessage').style.display = 'block';
+                return;
             } else {
-                noItemsFoundMessage.classList.add('hidden');
+                document.getElementById('noFoundItemsMessage').style.display = 'none';
             }
 
             filteredItems.forEach(item => {
                 const itemCard = document.createElement('div');
-                itemCard.className = 'item-card';
-
-                // Renderiza imagem ou placeholder de ícone
-                const itemImageHtml = item.photo
-                    ? `<img src="${item.photo}" alt="${item.name}">`
-                    : `<div class="item-placeholder-icon"><i class="fas fa-box"></i></div>`; // Ícone genérico
-
+                itemCard.classList.add('item-card');
                 itemCard.innerHTML = `
-                    ${itemImageHtml}
-                    <div class="item-card-content">
-                        <h3>${item.name}</h3>
-                        <p>${item.description}</p>
-                        <p class="item-meta"><strong>Encontrado em:</strong> ${item.location}</p>
-                        <p class="item-meta"><strong>Categoria:</strong> ${item.category}</p>
-                        <p class="item-meta"><strong>Data Encontrado:</strong> ${formatDateTime(item.foundDate)}</p>
-                        <button class="claim-btn" data-id="${item.id}">Comprovar Posse</button>
-                    </div>
+                    ${item.photo ? `<img src="${item.photo}" alt="${item.name}">` : `<div style="width: 100%; height: 160px; background-color: #ccc; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: #666; margin-bottom: 15px;">Sem Imagem</div>`}
+                    <h4>${item.name}</h4>
+                    <p style="font-size: 0.9em; color: var(--text-medium);">${item.description}</p>
+                    <p style="font-size: 0.8em; color: var(--text-light);">Local: ${item.location}</p>
+                    <p style="font-size: 0.8em; color: var(--text-light);">Categoria: ${item.categories.join(', ')}</p>
+                    <button class="primary claim-item-btn" data-item-id="${item.id}">Perdi este item!</button>
                 `;
-                studentItemsContainer.appendChild(itemCard);
+                container.appendChild(itemCard);
             });
 
-            studentItemsContainer.querySelectorAll('.claim-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const itemId = e.target.dataset.id;
-                    selectedItemForProof = items.find(item => item.id == itemId); // Salva o item
-                    showSection('questionnaire-section');
-                    document.getElementById('proof-form').reset(); // Limpa o formulário de comprovação
-                    document.getElementById('proof-message').textContent = '';
+            document.querySelectorAll('.claim-item-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const itemId = event.target.dataset.itemId;
+                    document.getElementById('proofItemId').value = itemId;
+                    document.getElementById('proofForm').reset(); // Limpa form ao abrir
+                    showScreen('proofOfOwnership');
                 });
             });
         }
 
-        // Lógica de busca para a visualização do aluno
-        studentSearchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value;
-            const activeFilterButton = categoryFilterButtonsContainer.querySelector('.filter-button.active');
-            const currentCategoryFilter = activeFilterButton ? activeFilterButton.dataset.category : 'Todos';
-            renderStudentItems(searchTerm, currentCategoryFilter);
+        // Filtro de itens na tela do aluno
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+                renderFoundItems(event.target.dataset.category, document.getElementById('searchItem').value);
+            });
         });
 
-        // Geração dos botões de filtro de categoria
-        function renderCategoryFilterButtons() {
-            categoryFilterButtonsContainer.innerHTML = ''; // Limpa botões existentes
+        // Busca de itens na tela do aluno
+        document.getElementById('searchItem').addEventListener('input', (event) => {
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.category;
+            renderFoundItems(activeFilter, event.target.value);
+        });
 
-            // Botão "Todos"
-            const allButton = document.createElement('button');
-            allButton.className = 'filter-button all-items-btn active';
-            allButton.textContent = 'Todos';
-            allButton.dataset.category = 'Todos';
-            allButton.addEventListener('click', (e) => {
-                categoryFilterButtonsContainer.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
-                renderStudentItems(studentSearchInput.value, 'Todos');
-            });
-            categoryFilterButtonsContainer.appendChild(allButton);
+        // --- Formulário de Comprovação de Posse ---
+        document.getElementById('proofForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const itemId = document.getElementById('proofItemId').value;
+            const item = itemsFound.find(i => i.id === itemId);
 
-            // Botões de categorias dinâmicas
-            categories.forEach(category => {
-                const button = document.createElement('button');
-                button.className = 'filter-button';
-                button.textContent = category;
-                button.dataset.category = category;
-                button.addEventListener('click', (e) => {
-                    categoryFilterButtonsContainer.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
-                    e.target.classList.add('active');
-                    renderStudentItems(studentSearchInput.value, category);
-                });
-                categoryFilterButtonsContainer.appendChild(button);
-            });
-        }
-
-
-        // Formulário de Comprovação
-        const proofForm = document.getElementById('proof-form');
-        proofForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (!selectedItemForProof) {
-                showNotification('Nenhum item selecionado para comprovação.', 'error');
+            if (!item) {
+                alert('Erro: Item não encontrado para comprovação.');
                 return;
             }
 
-            const studentName = document.getElementById('student-name').value;
-            const studentClass = document.getElementById('student-class').value;
-            const timeLost = document.getElementById('time-lost').value;
-            const lostLocation = document.getElementById('lost-location').value;
-            const uniqueDetail = document.getElementById('item-unique-detail').value;
+            const proof = {
+                id: 'proof_' + Date.now(),
+                itemId: itemId,
+                itemName: item.name,
+                studentName: document.getElementById('studentName').value,
+                studentClass: document.getElementById('studentClass').value,
+                lostLocation: document.getElementById('lostLocation').value,
+                itemCharacteristic: document.getElementById('itemCharacteristic').value,
+                status: 'pendente', // pendente, aprovado, rejeitado
+                timestamp: new Date().toISOString()
+            };
+            proofsOfOwnership.push(proof);
+            saveToLocalStorage('proofsOfOwnership', proofsOfOwnership);
 
-            const newProof = {
-                id: Date.now(),
-                itemId: selectedItemForProof.id,
-                studentName,
-                studentClass,
-                timeLost,
-                lostLocation,
-                uniqueDetail,
-                approved: false,
-                rejected: false,
-                approvalDate: null,
-                approvalCode: null,
-                viewedByStudent: false // Para saber se o aluno já viu a notificação
+            // Notificação para a secretaria
+            addNotification({
+                to: 'secretaria',
+                title: 'Nova Comprovação de Posse',
+                message: `O aluno(a) ${proof.studentName} da turma ${proof.studentClass} enviou uma comprovação para o item: "${item.name}".`,
+                type: 'new_proof',
+                read: false,
+                timestamp: new Date().toISOString()
+            });
+
+            showGlobalMessage('Enviamos uma notificação para a secretaria. Aguarde a sua resposta.', false, null, () => {
+                showScreen('studentHome');
+                document.getElementById('proofForm').reset();
+            });
+        });
+
+        // --- Login da Secretaria ---
+        const SECRETARY_EMAIL = 'secretaria@etec.com'; // Credenciais simples para demonstração
+        const SECRETARY_PASSWORD = 'senha123';
+
+        document.getElementById('loginForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const email = document.getElementById('secretaryEmail').value;
+            const password = document.getElementById('secretaryPassword').value;
+
+            if (email === SECRETARY_EMAIL && password === SECRETARY_PASSWORD) {
+                alert('Login bem-sucedido!');
+                showScreen('secretaryDashboard');
+                showSecretarySubTab('proofsList'); // Exibe as comprovações por padrão
+            } else {
+                alert('Email ou senha incorretos.');
+            }
+        });
+
+        // --- Funções da Área da Secretaria ---
+        function showSecretarySubTab(tabId) {
+            // Esconde todas as sub-abas
+            document.getElementById('proofsList').style.display = 'none';
+            document.getElementById('secretaryItemsList').style.display = 'none';
+            document.getElementById('addNewItemForm').style.display = 'none';
+
+            // Mostra a sub-aba selecionada
+            document.getElementById(tabId).style.display = 'block';
+
+            // Renderiza o conteúdo da aba
+            if (tabId === 'proofsList') {
+                renderProofsOfOwnership();
+            } else if (tabId === 'secretaryItemsList') {
+                renderSecretaryItems();
+            } else if (tabId === 'addNewItemForm') {
+                document.getElementById('itemRegistrationForm').reset(); // Limpa o formulário para novo item
+                document.getElementById('itemPhotoPreview').src = '#';
+                document.getElementById('itemPhotoPreview').style.display = 'none';
+                document.getElementById('addItemSubmitBtn').textContent = 'adicionar item';
+                document.getElementById('editItemId').value = ''; // Limpa ID para garantir novo cadastro
+                document.querySelectorAll('input[name="itemCategory"]').forEach(cb => cb.checked = false); // Desmarca categorias
+            }
+        }
+
+        document.getElementById('viewProofsBtn').addEventListener('click', () => showSecretarySubTab('proofsList'));
+        document.getElementById('viewItemsBtn').addEventListener('click', () => showSecretarySubTab('secretaryItemsList'));
+        document.getElementById('addNewItemBtn').addEventListener('click', () => showSecretarySubTab('addNewItemForm'));
+
+        // --- Renderização de Comprovações de Posse (Secretaria) ---
+        function renderProofsOfOwnership() {
+            const container = document.getElementById('pendingProofsContainer');
+            container.innerHTML = '';
+            const pendingProofs = proofsOfOwnership.filter(proof => proof.status === 'pendente');
+
+            if (pendingProofs.length === 0) {
+                document.getElementById('noProofsMessage').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('noProofsMessage').style.display = 'none';
+            }
+
+            pendingProofs.forEach(proof => {
+                const itemAssociated = itemsFound.find(item => item.id === proof.itemId);
+                const proofCard = document.createElement('div');
+                proofCard.classList.add('proof-card');
+                proofCard.innerHTML = `
+                    ${itemAssociated && itemAssociated.photo ? `<img src="${itemAssociated.photo}" alt="${itemAssociated.name}">` : `<div style="width: 100%; height: 160px; background-color: #ccc; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: #666; margin-bottom: 15px; font-size: 0.9em;">Item sem Imagem ou não encontrado</div>`}
+                    <p><strong>Item:</strong> ${proof.itemName}</p>
+                    <p><strong>Aluno:</strong> ${proof.studentName}</p>
+                    <p><strong>Turma:</strong> ${proof.studentClass}</p>
+                    <p><strong>Local Perdido:</strong> ${proof.lostLocation}</p>
+                    <p><strong>Característica:</strong> ${proof.itemCharacteristic || 'N/A'}</p>
+                    <div class="button-group">
+                        <button class="primary approve-proof-btn" data-proof-id="${proof.id}">Aprovar</button>
+                        <button class="danger reject-proof-btn" data-proof-id="${proof.id}">Rejeitar</button>
+                    </div>
+                `;
+                container.appendChild(proofCard);
+            });
+
+            document.querySelectorAll('.approve-proof-btn').forEach(btn => {
+                btn.addEventListener('click', (event) => handleProofAction(event.target.dataset.proofId, 'aprovado'));
+            });
+            document.querySelectorAll('.reject-proof-btn').forEach(btn => {
+                btn.addEventListener('click', (event) => handleProofAction(event.target.dataset.proofId, 'rejeitado'));
+            });
+        }
+
+        function handleProofAction(proofId, status) {
+            const proofIndex = proofsOfOwnership.findIndex(p => p.id === proofId);
+            if (proofIndex > -1) {
+                const proof = proofsOfOwnership[proofIndex];
+                proof.status = status;
+                saveToLocalStorage('proofsOfOwnership', proofsOfOwnership);
+
+                // Notificação para o aluno (simulada)
+                addNotification({
+                    to: 'aluno', // Idealmente seria um ID de aluno para notificação específica
+                    title: `Sua Comprovação do item "${proof.itemName}" foi ${status === 'aprovado' ? 'Aprovada' : 'Rejeitada'}`,
+                    message: `A secretaria revisou sua solicitação para o item "${proof.itemName}". Status: ${status.toUpperCase()}.`,
+                    type: 'proof_response',
+                    read: false,
+                    timestamp: new Date().toISOString()
+                });
+
+                showGlobalMessage(`Comprovação ${status} com sucesso!`, false, null, () => {
+                    renderProofsOfOwnership(); // Atualiza a lista de comprovações
+                });
+            }
+        }
+
+        // --- Renderização de Itens Cadastrados (Secretaria) ---
+        function renderSecretaryItems() {
+            const container = document.getElementById('registeredItemsContainer');
+            container.innerHTML = '';
+
+            if (itemsFound.length === 0) {
+                document.getElementById('noRegisteredItemsMessage').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('noRegisteredItemsMessage').style.display = 'none';
+            }
+
+            itemsFound.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.classList.add('item-card');
+                itemCard.innerHTML = `
+                    ${item.photo ? `<img src="${item.photo}" alt="${item.name}">` : `<div style="width: 100%; height: 160px; background-color: #ccc; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: #666; margin-bottom: 15px;">Sem Imagem</div>`}
+                    <h4>${item.name}</h4>
+                    <p style="font-size: 0.9em; color: var(--text-medium);">${item.description}</p>
+                    <p style="font-size: 0.8em; color: var(--text-light);">Local: ${item.location}</p>
+                    <p style="font-size: 0.8em; color: var(--text-light);">Categoria: ${item.categories.join(', ')}</p>
+                    <div class="button-group">
+                        <button class="primary edit-item-btn" data-item-id="${item.id}">Editar</button>
+                        <button class="danger delete-item-btn" data-item-id="${item.id}">Excluir</button>
+                    </div>
+                `;
+                container.appendChild(itemCard);
+            });
+
+            document.querySelectorAll('.edit-item-btn').forEach(btn => {
+                btn.addEventListener('click', (event) => editItem(event.target.dataset.itemId));
+            });
+            document.querySelectorAll('.delete-item-btn').forEach(btn => {
+                btn.addEventListener('click', (event) => deleteItem(event.target.dataset.itemId));
+            });
+        }
+
+        // --- Cadastro/Edição de Item (Secretaria) ---
+        document.getElementById('itemRegistrationForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const itemId = document.getElementById('editItemId').value;
+            const name = document.getElementById('itemName').value;
+            const description = document.getElementById('itemDescription').value;
+            const location = document.getElementById('itemLocation').value;
+            const categories = Array.from(document.querySelectorAll('input[name="itemCategory"]:checked')).map(cb => cb.value);
+            const photoFile = document.getElementById('itemPhoto').files[0];
+            let photoURL = document.getElementById('itemPhotoPreview').src; // Pega URL existente
+
+            if (categories.length === 0) {
+                alert('Selecione ao menos uma categoria para o item.');
+                return;
+            }
+
+            const saveItem = (url) => {
+                if (itemId) { // Edição de item existente
+                    const itemIndex = itemsFound.findIndex(item => item.id === itemId);
+                    if (itemIndex > -1) {
+                        itemsFound[itemIndex] = { ...itemsFound[itemIndex],
+                            name,
+                            description,
+                            location,
+                            categories,
+                            photo: url || photoURL || '' // Prioriza nova URL, senão a existente, senão vazia
+                        };
+                        saveToLocalStorage('itemsFound', itemsFound);
+                        showGlobalMessage('Item editado com sucesso!', false, null, () => {
+                            showSecretarySubTab('secretaryItemsList');
+                            renderFoundItems();
+                        });
+                    }
+                } else { // Novo item
+                    const newItem = {
+                        id: 'item_' + Date.now(),
+                        name,
+                        description,
+                        location,
+                        categories,
+                        photo: url || ''
+                    };
+                    itemsFound.push(newItem);
+                    saveToLocalStorage('itemsFound', itemsFound);
+                    addNotification({
+                        to: 'aluno',
+                        title: `Novo item encontrado: ${newItem.name}`,
+                        message: `Um ${newItem.name} foi encontrado e adicionado à lista de achados e perdidos. Verifique se é seu!`,
+                        type: 'new_item_found',
+                        read: false,
+                        timestamp: new Date().toISOString()
+                    });
+                    showGlobalMessage('Item adicionado com sucesso!', true, () => {
+                        // Undo add: remove o último item adicionado
+                        itemsFound.pop();
+                        saveToLocalStorage('itemsFound', itemsFound);
+                        renderFoundItems();
+                        renderSecretaryItems();
+                    }, () => {
+                        showSecretarySubTab('secretaryItemsList');
+                        renderFoundItems();
+                    });
+                }
+                document.getElementById('itemRegistrationForm').reset();
+                document.getElementById('itemPhotoPreview').src = '#'; // Resetar preview
+                document.getElementById('itemPhotoPreview').style.display = 'none';
+                document.getElementById('addItemSubmitBtn').textContent = 'adicionar item'; // Resetar texto do botão
+                document.getElementById('editItemId').value = ''; // Limpar ID de edição
             };
 
-            proofs.push(newProof);
-            localStorage.setItem('itemProofs', JSON.stringify(proofs));
-            showNotification('Sua comprovação foi enviada e aguarda aprovação.', 'info');
-            proofForm.reset();
-            updateProofNotificationCount(); // Atualiza o badge da secretaria
-            showSection('student-view'); // Volta para a tela do aluno
+            if (photoFile) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    saveItem(e.target.result); // Base64 da imagem
+                };
+                reader.readAsDataURL(photoFile);
+            } else {
+                // Se a foto atual é uma base64, mantém. Se for placeholder ou vazia, reseta.
+                saveItem(photoURL && photoURL.startsWith('data:') ? photoURL : '');
+            }
         });
 
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', () => {
-            renderStudentItems();
-            renderCategoryOptions(); // Carrega as categorias no select
-            renderCategoryFilterButtons(); // Carrega os botões de filtro
-            updateProofNotificationCount(); // Atualiza o contador de comprovações pendentes
-            updateApprovalNotificationBadge(); // Atualiza o contador de aprovações para o aluno
+        // Pré-visualização da foto
+        document.getElementById('itemPhoto').addEventListener('change', (event) => {
+            const preview = document.getElementById('itemPhotoPreview');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '#';
+                preview.style.display = 'none';
+            }
         });
+
+        function editItem(id) {
+            const item = itemsFound.find(i => i.id === id);
+            if (item) {
+                showSecretarySubTab('addNewItemForm');
+                document.getElementById('editItemId').value = item.id;
+                document.getElementById('itemName').value = item.name;
+                document.getElementById('itemDescription').value = item.description;
+                document.getElementById('itemLocation').value = item.location;
+
+                document.querySelectorAll('input[name="itemCategory"]').forEach(cb => {
+                    cb.checked = item.categories.includes(cb.value);
+                });
+
+                if (item.photo) {
+                    document.getElementById('itemPhotoPreview').src = item.photo;
+                    document.getElementById('itemPhotoPreview').style.display = 'block';
+                } else {
+                    document.getElementById('itemPhotoPreview').src = '#';
+                    document.getElementById('itemPhotoPreview').style.display = 'none';
+                }
+
+                document.getElementById('addItemSubmitBtn').textContent = 'Salvar Alterações';
+            }
+        }
+
+        function deleteItem(id) {
+            const itemIndex = itemsFound.findIndex(item => item.id === id);
+            if (itemIndex > -1) {
+                const deletedItem = itemsFound.splice(itemIndex, 1)[0];
+                saveToLocalStorage('itemsFound', itemsFound);
+
+                showGlobalMessage(`Item "${deletedItem.name}" excluído com sucesso!`, true, () => {
+                    // Undo delete
+                    itemsFound.splice(itemIndex, 0, deletedItem);
+                    saveToLocalStorage('itemsFound', itemsFound);
+                    renderSecretaryItems();
+                    renderFoundItems();
+                }, () => {
+                    renderSecretaryItems();
+                    renderFoundItems();
+                });
+            }
+        }
     </script>
 </body>
 </html>
