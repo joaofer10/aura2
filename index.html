@@ -10,8 +10,8 @@
     :root {
         /* Cores do Modo Claro (ajustadas para suavidade e novo brilho) */
         --primary-color: #3f6ebc;   /* Um azul um pouco mais suave para destaque */
-        --primary-bg: #DDE4ED;     /* Fundo principal: cinza mais escuro para a página toda */
-        --medium-bg: #F0F3F7;     /* Fundo de cards/seções: cinza muito claro, para substituir o branco */
+        --primary-bg: #d3dbe5;     /* Fundo principal: cinza mais escuro para a página toda */
+        --medium-bg: #f1f1f1bb;     /* Fundo de cards/seções: cinza muito claro, para substituir o branco */
         --text-dark: #333333;     /* Texto escuro: permanece forte para leitura */
         --text-light: #666666;    /* Texto mais leve: para descrições ou secundário */
         --border-color: #c9d2de; /* Cor de bordas para separação suave */
@@ -30,9 +30,9 @@
     body.dark-mode {
         /* Cores do Modo Escuro (ajustadas para contraste e harmonia) */
         --primary-color: #7abaff;      /* Azul para destaque que brilha no escuro, mas não agride */
-        --primary-bg: #1c2a38;        /* Fundo principal: cinza azulado muito escuro (para o corpo da página) */
-        --medium-bg: #293d50;        /* Fundo de cards/seções: cinza azulado um pouco mais claro que o principal */
-        --header-footer-dark-bg: #151E27; /* NOVO: Fundo mais escuro para cabeçalho e rodapé */
+        --primary-bg: #121e28;        /* Fundo principal: cinza azulado muito escuro (para o corpo da página) */
+        --medium-bg: #354e68;        /* Fundo de cards/seções: cinza azulado um pouco mais claro que o principal */
+        --header-footer-dark-bg: #295f94; /* NOVO: Fundo mais escuro para cabeçalho e rodapé */
         --text-dark: #e0e0e0;        /* Texto escuro (agora claro): quase branco */
         --text-light: #b0b0b0;       /* Texto mais leve (agora claro): cinza claro */
         --border-color: #3b526b;    /* Cor de bordas para separação sutil */
@@ -562,9 +562,10 @@
     .dark-mode .my-proof-item .status-tag.rejected {
         background-color: var(--status-rejected);
     }
-    .dark-mode #globalMessage {
-        background-color: rgba(0, 0, 0, 0.95);
-    }
+    /* Estilo do cursor personalizado (mantido para caso queira retomar) */
+    /* body {
+        cursor: url('http://googleusercontent.com/image_generation_content/2'), auto;
+    } */
 
 
     /* Media Queries para Responsividade Geral */
